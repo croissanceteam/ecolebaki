@@ -1,0 +1,23 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^login$ pages/login.php
+RewriteRule ^logout$ pages/logout.php
+RewriteRule ^viewdashboard$ pages/dashboard.php
+RewriteRule ^subscrit$ pages/subscription.php
+RewriteRule ^listpupils/(.*)/(.*)$ controllers/TaskPupils.php?depart=$1&year=$2
+RewriteRule ^listpupils$ controllers/TaskPupils.php
+RewriteRule ^viewpupils$ pages/viewpupils.php
+RewriteRule ^listpayments/(.*)/(.*)$ controllers/TaskPayment.php?depart=$1&year=$2
+RewriteRule ^listpayments$ controllers/TaskPayment.php
+RewriteRule ^addpayment$ controllers/TaskPayment.php
+RewriteRule ^loadslices$ controllers/TaskPayment.php
+RewriteRule ^listyears$ controllers/TaskPupils.php
+RewriteRule ^viewpayments$ pages/payments.php
+RewriteRule ^reportings-pay$ pages/reportingPay.php
+RewriteRule ^invoice$ controllers/TaskPayment.php?invoice
+RewriteRule ^md5$ controllers/md5.php
+RewriteRule ^layoutinvoice$ controllers/pdf.php
+RewriteRule ^reinscriptions$ pages/reinscriptions.php
+RewriteRule ^reenrol$ controllers/TaskPupils.php
+RewriteRule ^pupilstoreenrol$ controllers/TaskPupils.php
+RewriteRule ^getdashboarddata$ controllers/TaskPupils.php

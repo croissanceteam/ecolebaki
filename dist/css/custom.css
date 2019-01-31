@@ -1,0 +1,44 @@
+#loader{
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+    /* margin: 7em 0em 20em 0em; */
+}
+/* div h4, div.block-printer {
+     
+} */
+div.block-printer {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color:#424242;
+}
+div h3 {
+    color:#424242;
+}
+td.label-text {
+    padding-right: 1em;
+}
+div.inner-block {
+    padding: 1.9em;
+}
+.alert{
+    position:absolute;
+    z-index: 100;
+    width: 270px;
+    text-align: center;
+    font-size:1.4em;
+}
+@media only screen and (max-width: 767px) {
+    /* for phone */
+    .alert{
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+}
+@media only screen and (min-width: 768px) {
+    .alert{
+        top: 50%; left: 50%;
+    }
+    
+}
