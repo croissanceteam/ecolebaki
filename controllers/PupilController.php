@@ -5,7 +5,7 @@ include_once 'db.php';
 
 class PupilController {
 
-   
+
     private static $reqGetActualPupilsList = "SELECT DISTINCT(pupils._ID) AS id, pupils._MAT AS matricule,UPPER(pupils._NAME) AS name_pupil,pupils._SEX AS gender,subscrit._CODE_CLASS AS level,subscrit._CODE_SECTION AS section
                     FROM t_students pupils
                     JOIN t_payment payments ON pupils._MAT=payments._MATR
@@ -17,7 +17,7 @@ class PupilController {
                     JOIN t_subscription subscrit ON pupils._MAT=subscrit._MATR_PUPIL
                     WHERE subscrit._DEPARTMENT=:department AND subscrit._ANASCO=:year
                     AND subscrit._MATR_PUPIL NOT IN (SELECT _MATR_PUPIL FROM t_subscription WHERE _ANASCO=:actualyear)";
-    private static $reqInsertPay = "INSERT INTO t_payment (_IDPAY,_MATR,_CODE_SLICE,_OBJECT,_DATEPAY,_TIMEPAY,_AMOUNT,_ANASCO,_USER_AGENT,_DEPARTMENT) 
+    private static $reqInsertPay = "INSERT INTO t_payment (_IDPAY,_MATR,_CODE_SLICE,_OBJECT,_DATEPAY,_TIMEPAY,_AMOUNT,_ANASCO,_USER_AGENT,_DEPARTMENT)
                     VALUES(:idpay,:matr,:codeslice,:objectpay,:datepay,:timepay,:amount,:anasco,:user,:department)";
     private static $reqInsertCollegeYears = "INSERT INTO t_subscription (_MATR_PUPIL,_CODE_CLASS,_CODE_SECTION,_DATE_SUB,_CODE_PAY,_CODE_AGENT,_ANASCO,_DEPARTMENT)
                     VALUES (:matr,:codeClass,:codeSection,:dateSub,:codePay,:codeAgent,:anasco,:department)";
@@ -47,17 +47,17 @@ class PupilController {
         $M = [];
         $P = [];
         $current = $_SESSION['anasco'];
-        for ($i=1; $i <= 6 ; $i++) { 
+        for ($i=1; $i <= 6 ; $i++) {
                $P[$current][$i] = 0;
                $P[$last][$i] = 0;
         }
-        for ($i=1; $i <= 3 ; $i++) { 
+        for ($i=1; $i <= 3 ; $i++) {
             $M[$current][$i] = 0;
             $M[$last][$i] = 0;
         }
-        
+
         foreach ($ds as $value) {
-            
+
             switch ($value->class) {
                 case 1:
                     if($value->section == 'MATERNELLE'){
@@ -98,11 +98,11 @@ class PupilController {
                     # code...
                     break;
             }
-           
+
         }
 
-        for ($class=1; $class <= 3; $class++) { 
-            $suffix = ($class == 1) ? 'ere ' : 'eme'; 
+        for ($class=1; $class <= 3; $class++) {
+            $suffix = ($class == 1) ? 'ere ' : 'eme';
             $data[] = [
                 'promotion' => $class.'º Ma.',
                 'current' => $M[$current][$class],
@@ -110,8 +110,8 @@ class PupilController {
             ];
         }
 
-        for ($class=1; $class <= 6; $class++) { 
-            $suffix = ($class == 1) ? 'ere ' : 'eme'; 
+        for ($class=1; $class <= 6; $class++) {
+            $suffix = ($class == 1) ? 'ere ' : 'eme';
             $data[] = [
                 'promotion' => $class.'º Pri.',
                 'current' => $P[$current][$class],
@@ -119,20 +119,20 @@ class PupilController {
             ];
         }
 
-        
+
 
         return json_encode($data);
 
     }
 
     public static function getPupilsToReEnrol() {
-        
+
         $query_execute = queryDB(self::$reqGetPupilsToReEnrol, [
             'department' => $_SESSION['direction'],
             'year' => self::getLastYear(),
             'actualyear'    =>  $_SESSION['anasco']
         ]);
-        
+
         $ds = $query_execute->fetchAll();
         return json_encode($ds);
     }
@@ -201,12 +201,12 @@ class PupilController {
         echo $result;
     }
 
-    
+
 
     public static function reEnrolPupil($data) {
         $payGenerate = "PAY-" . time();
         $db = getDB();
-        
+
         try {
 
             $db->beginTransaction();
@@ -245,7 +245,7 @@ class PupilController {
             $sliceAmount = $resultSliceInfos->fetch();
             $total1TRF = $sliceAmount->_AMOUNT;
             $remaining_amount = $total1TRF - $data['amount'];
-            
+
             $_SESSION['namePupil'] = $data['name_pupil'];
             $_SESSION['idpay'] = $payGenerate;
             $_SESSION['level'] = ($data['new_level'] == 1) ? $data['new_level'] . "ère " . $data['new_section'] : $data['new_level'] . "ème " . $data['new_section'];
