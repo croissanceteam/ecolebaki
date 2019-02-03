@@ -219,7 +219,7 @@ if (!isset($_SESSION['uid'])) {
                                             <th>MATRICULE</th>
                                             <th>NOM ELEVE</th>
                                             <th id="tr_sexe">SEXE</th>
-                                            <th>IDPAY</th>
+                                            <th>CODE PAIE</th>
                                             <th>DATEPAIE</th>
                                             <th>HEUREPAIE</th>
                                             <th>PERCEPTEUR</th>

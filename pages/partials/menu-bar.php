@@ -6,7 +6,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a id="title_navbar" class="navbar-brand" href="index.html">CS BAKI | <? echo ucwords($_SESSION['direction'])?></a>
+                <a id="title_navbar" class="navbar-brand" href="index.html">ECOLE BAKI | <? echo ucwords($_SESSION['direction'])?></a>
             </div>
             <!-- /.navbar-header -->
 

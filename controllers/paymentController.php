@@ -9,7 +9,7 @@ class PaymentController {
                     FROM t_payment pay
                     JOIN t_school_fees sfees ON pay._OBJECT=sfees._CODE
                     JOIN t_slice_payment spay ON spay._CODESLICE=pay._CODE_SLICE
-                    WHERE pay._MATR=:matr AND pay._ANASCO=:anasco";
+                    WHERE pay._MATR=:matr AND pay._ANASCO=:anasco AND spay._ANASCO=:anasco";
     private static $reqGetActualPupilsPaymentsList = "SELECT DISTINCT(pupils._ID) AS id, pupils._MAT AS matricule,UPPER(pupils._NAME) AS name_pupil,pupils._SEX AS gender,subscrit._CODE_CLASS AS level,subscrit._CODE_SECTION AS section
                     FROM t_students pupils
                     JOIN t_payment payments ON pupils._MAT=payments._MATR
@@ -22,9 +22,10 @@ class PaymentController {
                     WHERE payments._DEPARTMENT=:department AND subscrit._ANASCO=:year";
     private static $reqInsertPay = "INSERT INTO t_payment (_IDPAY,_MATR,_CODE_SLICE,_OBJECT,_DATEPAY,_TIMEPAY,_AMOUNT,_ANASCO,_USER_AGENT,_DEPARTMENT)
                     VALUES(:idpay,:matr,:codeslice,:objectpay,:datepay,:timepay,:amount,:anasco,:user,:department)";
-    private static $reqGetSliceInfos = "SELECT spay.*, sfees._LABEL AS _OBJECT_PAY FROM t_slice_payment spay
+    private static $reqGetSliceInfos = "SELECT spay.*, sfees._LABEL AS _OBJECT_PAY
+                    FROM t_slice_payment spay
                     JOIN t_school_fees sfees ON sfees._CODE = spay._CODE_FEES
-                    WHERE spay._CODESLICE = ?";
+                    WHERE spay._CODESLICE =:code AND spay._ANASCO=:anasco";
     private static $getSliceSumPaidByPupil = "SELECT SUM(_AMOUNT) AS sum_slice_paid FROM t_payment WHERE _CODE_SLICE = ? AND _MATR = ?";
 
 
@@ -37,7 +38,7 @@ class PaymentController {
         $data = $query_execute->fetchAll();
         for ($i = 0; $i < sizeof($data); $i++) {
             $matricule = $data[$i]->matricule;
-            $pupil_payments_infos = queryDB(self::$reqGetPupilPaymentsInfos, ['matr' => $matricule, 'anasco' => '2017-2018']);
+            $pupil_payments_infos = queryDB(self::$reqGetPupilPaymentsInfos, ['matr' => $matricule, 'anasco' => $year]);
             $pupil_infos[$i] = [
                 'id' => $data[$i]->id,
                 'matricule' => $matricule,
@@ -53,7 +54,7 @@ class PaymentController {
     }
     public static function getActualPupilsPaymentsList() {
 
-        $query_execute = queryDB(self::$reqGetActualPupilsPaymentsList, [
+        $query_execute = queryDB(self::$reqGetPupilsPaymentsList, [
             'department' => $_SESSION['direction'],
             'year' => $_SESSION['anasco']
         ]);
@@ -63,7 +64,7 @@ class PaymentController {
         for ($i = 0; $i < sizeof($data); $i++) {
             $matricule = $data[$i]->matricule;
             $pupil_payments_infos = queryDB(self::$reqGetPupilPaymentsInfos, ['matr' => $matricule, 'anasco' => $_SESSION['anasco']]);
-            $array_paie[$i] = [
+            $pupil_infos[$i] = [
                 'id' => $data[$i]->id,
                 'matricule' => $matricule,
                 'name_pupil' => $data[$i]->name_pupil,
@@ -74,7 +75,7 @@ class PaymentController {
             ];
         }
         // echo 'Anne: '. $_SESSION['anasco'];
-        return json_encode($array_paie);
+        return json_encode($pupil_infos);
     }
 
     public function getFees() {
@@ -95,7 +96,10 @@ class PaymentController {
         $db = getDB();
         $payGenerate = "PAY-" . time();
 
-        $resultSliceInfos = queryDB(self::$reqGetSliceInfos, [$data['slice']]);
+        $resultSliceInfos = queryDB(self::$reqGetSliceInfos, [
+          'code' => $data['slice'],
+          'anasco' => $data['anasco']
+        ]);
 
         if ($resultSliceInfos == TRUE) {
 
@@ -109,7 +113,7 @@ class PaymentController {
                 'datepay' => date('d/m/Y'),
                 'timepay' => date('H:i:s'),
                 'amount' => $data['amount'],
-                'anasco' => $_SESSION['anasco'],
+                'anasco' => $data['anasco'],
                 'user' => $_SESSION['uid'],
                 'department' => $_SESSION['direction']
             ]);
@@ -127,6 +131,7 @@ class PaymentController {
                 $_SESSION['amount'] = $data['amount'];
                 $_SESSION['motifPay'] = $sliceInfos->_LABELSLICE . "/" . $sliceInfos->_OBJECT_PAY;
                 $_SESSION['remaining_amount'] = $remaining_amount;
+                $_SESSION['anascoPay'] = $data['anasco'];
 
                 $result = 1;
             } else {

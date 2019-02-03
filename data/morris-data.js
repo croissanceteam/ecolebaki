@@ -28,7 +28,7 @@ $(function() {
         {"promotion":"2eme Maternelle","current":1,"last":0},
         {"promotion":"3eme Maternelle","current":0,"last":0}
     ];
-   
+
     $.get('getdashboarddata', function(data){
         console.log("Success :",data);
 
@@ -54,21 +54,14 @@ $(function() {
         config.element = 'morris-bar-chart';
         Morris.Bar(config);
 
-        // Morris.Donut({
-        //     element: 'morris-donut-chart',
-        //     data: JSON.parse(data),
-        //     resize: true
-        // });
-
-        // chart.setData(data);
 
     }).fail(function(){
         console.log("Error");
     });
 
-    
-    
-    
+
+
+
 
     // Morris.Bar({
     //     element: 'morris-bar-chart',
@@ -107,5 +100,5 @@ $(function() {
     //     hideHover: 'auto',
     //     resize: true
     // });
-    
+
 });

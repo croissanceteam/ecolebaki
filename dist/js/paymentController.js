@@ -51,17 +51,20 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                 var index = e.target._DT_CellIndex.row;
 
                 $('#error_msg').html("");
-                document.querySelector('#btn_date_after').click();
+                document.querySelector('#show-pupil-payments').click();
                 document.querySelector('#LabelName').innerHTML = data[index].name_pupil;
                 document.querySelector('#mat_pupil').value = data[index].matricule;
                 document.querySelector('#name_pupil').value = data[index].name_pupil;
                 document.querySelector('#level').value = data[index].level;
                 document.querySelector('#section').value = data[index].section;
+                document.querySelector('#anasco').value = (document.querySelector('#lbl_year').innerHTML).trim();
                 document.querySelector('#add_payment_form').reset();
 
 
+
                 //------------------ I gotta get all payments of the current pupil ----------------
-                //console.log("List pay: ",JSON.stringify(data[index].payinfo));
+                // console.log("List pay: ",JSON.stringify(data[index].payinfo));
+                console.log("List pay: ",data[index].payinfo);
 
                 var tablePay = $('#dataTables-paiement').DataTable({
                     destroy: true,
@@ -116,10 +119,11 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
     var iTable;
     $scope.get_list_pupils = function (year, index) {
 
-
+        document.querySelector('#anasco').value = year;
+        // alert(year);
         var title_navbar = document.querySelector('#title_navbar');
         title_navbar = title_navbar.innerHTML.split('|')[1].trim();
-        //alert(title_navbar);
+        // alert(title_navbar);
         // var url_get_list = 'listpupils/' + title_navbar + '/SUB/' + year;
         var url_get_list = 'listpayments/' + title_navbar + '/' + year;
         console.log('URL 1:', url_get_list);
@@ -147,7 +151,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
 
     $scope.toFillTable = function (index, url) {
         $http.get(url).then(function (response) {
-            console.log(response.data);
+            console.log(url,response.data);
         }, function (error) {
             console.log(error)
         })
@@ -197,9 +201,15 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
             var data = table.data();
             var index = e.target._DT_CellIndex.row;
             console.log('Data: ',data[index]);
-            
-            document.querySelector('#btn_date_after').click();
+            console.log("Last list pay: ",data[index].payinfo);
+
+            document.querySelector('#show-pupil-payments').click();
             document.querySelector('#LabelName').innerHTML = data[index].name_pupil;
+            document.querySelector('#mat_pupil').value = data[index].matricule;
+            document.querySelector('#name_pupil').value = data[index].name_pupil;
+            document.querySelector('#level').value = data[index].level;
+            document.querySelector('#section').value = data[index].section;
+
 
             var tablePay = $('#dataTables-paiement').DataTable({
                 destroy: true,
@@ -263,6 +273,8 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
             $('#error_msg').html("Veuillez renseigner le type de frais");
         } else if (amount == "") {
             $('#error_msg').html("Veuillez renseigner le montant");
+        } else if ($('#mat_pupil').val() == '') {
+            $('#error_msg').html("Le paiement ne peut pas s'effectuer");
         } else {
             $('#error_msg').html("");
             /** reset the form here */
@@ -278,7 +290,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                 success: function (result) {
                     console.log("result");
                     console.log(result);
-                    document.querySelector('#btn_date_after').click();
+                    document.querySelector('#show-pupil-payments').click();
 
                     if (result == 1) {
                         $('#success_alert').html("Paiement effectué!");
@@ -312,21 +324,21 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
         return false;
     });
 
-    function fillSlicesList() {
-        $('#slice').empty();
-        $.ajax({
-            url: 'loadslices',
-            data: 'getslices', 
-            dataType: 'json',
-            success: function (json) {
-                $('#slice').append('<option value="">-------</option>');
-                $.each(json, function (index, value) {
-                    $('#slice').append('<option value="' + index + '" label="' + value + '">' + value + '</option>');
-                });
-            }
-        });
-    }
-    fillSlicesList();
+    // function fillSlicesList() {
+    //     $('#slice').empty();
+    //     $.ajax({
+    //         url: 'loadslices',
+    //         data: 'getslices',
+    //         dataType: 'json',
+    //         success: function (json) {
+    //             $('#slice').append('<option value="">-------</option>');
+    //             $.each(json, function (index, value) {
+    //                 $('#slice').append('<option value="' + index + '" label="' + value + '">' + value + '</option>');
+    //             });
+    //         }
+    //     });
+    // }
+    // fillSlicesList();
     function showInvoice() {
 
     }

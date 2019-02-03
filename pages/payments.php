@@ -145,13 +145,13 @@
                         </div>
             </div>
             </div>
-            <button style="display:none;" id="btn_date_after" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+            <button style="display:none;" id="show-pupil-payments" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#pupilPaymentsModal">
                                 Launch Date after
                             </button>
             <a href="invoice" target="_blank"><button style="display:none;" id="invoice_link">Show invoice</button></a>
 
 
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal fade" id="pupilPaymentsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -178,21 +178,22 @@
                                         <input type="hidden" class="form-control" id="name_pupil" name="name_pupil" >
                                         <input type="hidden" class="form-control" id="level" name="level" >
                                         <input type="hidden" class="form-control" id="section" name="section" >
-                                            
+                                        <input type="hidden" class="form-control" id="anasco" name="anasco" >
+
                                         <div class="form-group">
-                                            
+
                                             <label for="slice">Type de frais</label>
                                             <select class="form-control" id="slice" name="slice" >
                                                 <option value="">-----</option>
-
+                                                <option value="1TRF">1ERE TRANCHE</option>
+                                                <option value="2TRF">2EME TRANCHE</option>
+                                                <option value="3TRF">3EME TRANCHE</option>
                                             </select>
 
                                             <div class="form-group">
                                                 <label class="control-label"  for="amount">Montant à payer</label>
                                                 <input type="number" class="form-control" id="amount" name="amount">
                                             </div>
-
-
 
                                         </div>
                                         <!-- /.col-lg-6 (nested) -->
@@ -203,7 +204,7 @@
                                         <thead>
                                             <tr>
 
-                                                <th>Id ticket</th>
+                                                <th>Code paie</th>
                                                 <th>Tranche</th>
                                                 <th>Type de Frais</th>
                                                 <th>Montant</th>

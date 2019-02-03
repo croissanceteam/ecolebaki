@@ -30,7 +30,7 @@ ob_start();
                     <td style="text-align: center;width: 34%;"></td>
                     <td style="text-align: right; width:33%"><img src="../dist/images/logo-reverse.png" width=150 alt=""> </td>
                 </tr>
-                
+
             </table>
 
             <div style="width: 100%; height:2px; background-color:grey;"></div>
@@ -65,7 +65,7 @@ ob_start();
         </tr>
         <tr>
             <td class="label">Année scolaire </td>
-            <td class="value">: <?= $_SESSION['anasco'] ?></td>
+            <td class="value">: <?= $_SESSION['anascoPay'] ?></td>
         </tr>
         <tr><td style="height:10px;"></td></tr>
         <tr>
