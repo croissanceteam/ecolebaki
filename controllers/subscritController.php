@@ -65,7 +65,7 @@ class SubscritController
              VALUES (:matr,:codeClass,:codeSection,:dateSub,:codePay,:codeAgent,:anasco,:department)";
             $db->beginTransaction();
             $query_execute=$db->prepare($Query);
-            $query_execute->execute(array(
+            $result = $query_execute->execute(array(
                 "matr"=>$matrGenerate,
                 "codeClass"=>$level,
                 "codeSection"=>$section,
@@ -76,6 +76,12 @@ class SubscritController
                 "department"=>$_SESSION['direction']
             ));
             $db->commit();
+
+            if ($result == 1) {
+              $_SESSION['success'] = 'L\'inscription a réussi';
+            }else{
+              $_SESSION['error'] = 'L\'inscription a échoué';
+            }
 
             $_SESSION['idpay']=$payGenerate;
             $_SESSION['namePupil']=$name;
@@ -91,13 +97,14 @@ class SubscritController
             // $_SESSION['subject']="Inscription";
             $_SESSION['motifPay'] = $total1TRF == $amount ? "1ERE TRANCHE - FRAIS SCOLAIRE" : "ACOMPTE - 1ERE TRANCHE - FRAIS SCOLAIRE";
             //$this->getPDFInvoiceLayout();
-            
+
             $remaining_amount = $total1TRF - $amount;
             $_SESSION['remaining_amount'] = $remaining_amount;
 
          echo '<meta http-equiv="refresh" content=0;URL=invoice>';
        }catch(Exception $e){
            //echo $e->getMessage();
+           // throw new \Exception($e->getMessage(), 1);
        }
     }
     public function get_list_pupils($direction,$year){

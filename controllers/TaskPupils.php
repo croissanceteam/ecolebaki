@@ -6,24 +6,35 @@ if (isset($_SESSION['uid'])) {
   include_once 'PupilController.php';
   $sub=new subscritController();
   if ($_SERVER['REQUEST_METHOD']=='POST') {
+
+
     if(isset($_POST['sex'])){
-      $sub->Add(
-        $_POST['name'],
-        $_POST['sex'],
-        $_POST['phone'],
-        $_POST['town'],
-        $_POST['address'],
-        $_POST['born_town'],
-        $_POST['birthday'],
-        $_POST['section'],
-        $_POST['level'],
-        $_POST['amount'],
-        $_POST['picture']
-      );
+      try {
+        if($_POST['picture'] == ''){
+          $_SESSION['error'] = 'Veuillez choisir la photo de l\'élève';
+        }else{
+          $sub->Add(
+            $_POST['name'],
+            $_POST['sex'],
+            $_POST['phone'],
+            $_POST['town'],
+            $_POST['address'],
+            $_POST['born_town'],
+            $_POST['birthday'],
+            $_POST['section'],
+            $_POST['level'],
+            $_POST['amount'],
+            $_POST['picture']
+          );
+        }
+      } catch (\Exception $e) {
+          echo 'Erreur';
+      }
+
     }else if($_POST['reenrol']){
         echo PupilController::reEnrolPupil($_POST);
     }
-      
+
   }else {
       if (isset($_GET['depart']) && isset($_GET['year'])) {
         $sub->get_list_pupils($_GET['depart'],$_GET['year']);
@@ -42,7 +53,7 @@ if (isset($_SESSION['uid'])) {
             echo PupilController::getPupilsToReEnrol();
           }
         }
-        
+
       }
   }
 

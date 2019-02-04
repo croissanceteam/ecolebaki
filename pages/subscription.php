@@ -41,6 +41,9 @@ session_start();
 <?php
      require_once 'partials/menu-bar.php';
 ?>
+<?php
+    require_once '../controllers/TaskPupils.php';
+?>
 <div id="page-wrapper">
 
     <button class="btn btn-primary btn-lg" data-toggle="modal" style="display: none;" id="btnCamModal" data-target="#myModal">
@@ -73,6 +76,25 @@ session_start();
                             </div>
                             <!-- /.modal -->
             <div class="row">
+                <div class="col-lg-12" style="margin-top:20px;">
+                  <?php
+
+                  if(isset($_SESSION['success'])): ?>
+                    <div class="alert alert-success alert-dismissible" role="alert" id="success_alert">
+                      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                      <?= $_SESSION['success'] ?>
+                    </div>
+                  <?php endif; ?>
+                  <?php if(isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger alert-dismissible" role="alert" id="danger_alert">
+                      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                      <?= $_SESSION['error'] ?>
+                    </div>
+                  <?php endif;
+                  // unset($_SESSION['success']);
+                  // unset($_SESSION['error']);
+                  ?>
+                </div>
                 <div class="col-lg-12">
                     <h1 class="page-header">Nouvel élève <i class="fa fa-user fa-fw" style="float:right"></i></h1>
                 </div>
@@ -156,7 +178,7 @@ session_start();
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label"  for="inputSuccess">Téléphone</label>
-                                            <input type="text" name="phone" class="form-control" required>
+                                            <input type="text" name="phone" class="form-control" min="1" maxlength="10" required>
                                         </div>
 
 
@@ -178,7 +200,7 @@ session_start();
                                                     <span class="fa fa-th"></span>
                                                 </div>
                                         </div>
-                                        
+
                                         <div class="form-group">
                                             <label>Section</label>
                                             <select name="section" class="form-control" onchange="changedSection()" id="cboSection" name="section" required>
@@ -200,7 +222,7 @@ session_start();
                                         </div>
                                         <div class="form-group" style="display:none;">
                                             <label class="control-label" for="inputSuccess">Base64</label>
-                                            <input name="picture" id="picture" type="text" class="form-control" required>
+                                            <input name="picture" id="picture" type="text" class="form-control">
                                         </div>
                                         <button id="btnAdd" type="submit" class="btn btn-primary btn-circle btn-lg"><i class="fa fa-plus"></i>
                                         </button>
@@ -220,11 +242,15 @@ session_start();
             <!-- /.row -->
         </div>
         <!-- /#page-wrapper -->
+        <?php
+        // $_SESSION['success'] = '';
+        // $_SESSION['error'] = '';
+        unset($_SESSION['success']);
+        unset($_SESSION['error']);
+         ?>
 
     </div>
-    <?php
-        require_once '../controllers/TaskPupils.php';
-    ?>
+
 
 <script src="vendor/jquery/jquery.min.js"></script>
 
@@ -239,24 +265,23 @@ session_start();
     <script src="dist/js/bootstrap-datepicker.min.js"></script>
     <script src="dist/js/camera.js"></script>
     <script>
+
+
     function changedSection(){
+        $('#cboLevel').empty();
         var cboSection=document.querySelector('#cboSection');
         var cboLevel=document.querySelector('#cboLevel');
         if (cboSection.value=="MATERNELLE") {
             for (var index =1 ;index <=3; index++) {
-                    var option=document.createElement('option');
-                    option.text=index;
-                    cboLevel.add(option,index);
-
-
+                var option=document.createElement('option');
+                option.text=index;
+                cboLevel.add(option,index);
             }
         }else{
             for (var index =1 ;index <=6; index++) {
-                    var option=document.createElement('option');
-                    option.text=index;
-                    cboLevel.add(option,index);
-
-
+                var option=document.createElement('option');
+                option.text=index;
+                cboLevel.add(option,index);
             }
         }
     }
