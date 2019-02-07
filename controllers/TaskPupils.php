@@ -10,9 +10,7 @@ if (isset($_SESSION['uid'])) {
 
     if(isset($_POST['sex'])){
       try {
-        if($_POST['picture'] == ''){
-          $_SESSION['error'] = 'Veuillez choisir la photo de l\'élève';
-        }else{
+
           $sub->Add(
             $_POST['name'],
             $_POST['sex'],
@@ -26,7 +24,7 @@ if (isset($_SESSION['uid'])) {
             $_POST['amount'],
             $_POST['picture']
           );
-        }
+
       } catch (\Exception $e) {
           echo 'Erreur';
       }

@@ -26,7 +26,7 @@ ob_start();
         <div style="margin-left:10mm;margin-right:10mm;">
             <table style="width: 100%;">
                 <tr>
-                    <td style="text-align: left;width: 33%;"><h3 style="margin-bottom:25px;">ECOLE BAKI / <?= $_SESSION['direction'] ?></h3>Nº12, Av. EZO <br>Q/YOLO-NORD<br>C/KALAMU.<br>Site web: http://www.ecolebaki.com</td>
+                    <td style="text-align: left;width: 33%;"><h3 style="margin-bottom:25px;">ECOLE BAKI / <?= $_SESSION['direction'] ?></h3>Nº 9, Av. M'fimi <br>Q/YOLO-NORD<br>C/KALAMU.<br>Site web: http://www.ecolebaki.com</td>
                     <td style="text-align: center;width: 34%;"></td>
                     <td style="text-align: right; width:33%"><img src="../dist/images/logo-reverse.png" width=150 alt=""> </td>
                 </tr>

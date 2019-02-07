@@ -83,6 +83,7 @@ class SubscritController
               $_SESSION['error'] = 'L\'inscription a échoué';
             }
 
+            $_SESSION['anascoPay'] = $_SESSION['anasco'];
             $_SESSION['idpay']=$payGenerate;
             $_SESSION['namePupil']=$name;
             $_SESSION['amount'] = $amount;

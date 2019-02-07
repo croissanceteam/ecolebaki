@@ -35,6 +35,20 @@ session_start();
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <style>
+    .required.control-label:after {
+      color: #d00;
+      /* content: "*"; */
+      margin-left: 8px;
+      top:7px;
+      
+      font-family: 'FontAwesome';
+      font-weight: normal;
+      font-size: 10px;
+      content: "\f069";
+    }
+    </style>
+
 </head>
 
 <body>
@@ -126,11 +140,11 @@ session_start();
                                 <div class="col-lg-6">
                                     <form method="post">
                                         <div class="form-group">
-                                            <label class="control-label" for="inputSuccess">Nom complet</label>
+                                            <label class="control-label required" for="inputSuccess">Nom complet</label>
                                             <input type="text" name="name" class="form-control" required>
                                         </div>
                                         <div class="form-group">
-                                            <label>Genre</label>
+                                            <label class="control-label required">Genre</label>
                                             <select class="form-control" name="sex" required>
                                                 <option></option>
                                                 <option value="M">Masculin</option>
@@ -139,7 +153,7 @@ session_start();
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label>Province d'origine</label>
+                                            <label class="control-label required">Province d'origine</label>
                                             <select class="form-control" name="town" required>
                                                 <option></option>
                                                 <option>Bas-Uele</option>
@@ -173,12 +187,12 @@ session_start();
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label" for="inputSuccess">Adresse</label>
+                                            <label class="control-label required" for="inputSuccess">Adresse</label>
                                             <input type="text" name="address" class="form-control" required>
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label"  for="inputSuccess">Téléphone</label>
-                                            <input type="text" name="phone" class="form-control" min="1" maxlength="10" required>
+                                            <input type="text" name="phone" class="form-control" min="1" maxlength="10">
                                         </div>
 
 
@@ -188,11 +202,11 @@ session_start();
                                 <div class="col-lg-6" style="float:right;">
 
                                         <div class="form-group">
-                                            <label class="control-label" for="inputSuccess">Lieu de naissance</label>
+                                            <label class="control-label required" for="inputSuccess">Lieu de naissance</label>
                                             <input type="text" name="born_town" class="form-control" required>
                                         </div>
 
-                                             <label>Date de naissance</label>
+                                             <label class="control-label required">Date de naissance</label>
                                         <div class="input-group date dp" style="" data-provider="datepicker">
 
                                                 <input id="date1Export" style="" placeholder="" type="text" name="birthday" class="form-control" required/>
@@ -202,7 +216,7 @@ session_start();
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Section</label>
+                                            <label class="control-label required">Section</label>
                                             <select name="section" class="form-control" onchange="changedSection()" id="cboSection" name="section" required>
                                                 <option></option>
                                                 <option>MATERNELLE</option>
@@ -211,13 +225,13 @@ session_start();
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                        <label for="">Niveau</label>
+                                        <label class="control-label required" for="">Niveau</label>
                                         <select name="level" class="form-control" id="cboLevel" name="level" required>
                                                 <option></option>
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <label class="control-label"  for="inputSuccess">Montant</label>
+                                            <label class="control-label required"  for="inputSuccess">Montant</label>
                                             <input type="number" name="amount" class="form-control" min="1" required>
                                         </div>
                                         <div class="form-group" style="display:none;">
