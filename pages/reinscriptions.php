@@ -97,7 +97,7 @@ if (!isset($_SESSION['uid'])) {
                             <div class="tab-content" >
                                 <div class="tab-pane fade in active" id="{{college_year}}">
 
-                                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <table width="100%" class="table table-striped table-bordered table-hover" id="pupilstoreenrol-table">
                                         <thead>
                                             <tr>
                                                 <th>Matricule</th>

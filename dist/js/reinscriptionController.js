@@ -8,9 +8,9 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
         $(document).ready(function () {
             console.log('222');
 
-            
 
-            var table = $('#dataTables-example').DataTable({
+
+            var table = $('#pupilstoreenrol-table').DataTable({
                 ajax: {
                     url: 'pupilstoreenrol',
                     dataSrc: '',
@@ -52,7 +52,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
 
 
 
-            $('#dataTables-example tbody').on('click', 'tr', function (e) {
+            $('#pupilstoreenrol-table tbody').on('click', 'tr', function (e) {
                 var data = table.data();
                 var index = e.target._DT_CellIndex.row;
                 //console.log('Data: ',data[index]);
@@ -68,16 +68,16 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                 var fieldAmount = document.querySelector("#amount");
                 var checkbox  = document.querySelector("#pass_switcher");
                 var checkbox2  = $("#pass_switcher");
-                
+
                 if(data[index].level == 6 && data[index].section == 'PRIMAIRE'){
                     document.querySelector('#new_section').value = 'PRIMAIRE';
                     document.querySelector('#new_level').value = '6ème';
-                    
+
                     checkbox.checked = false;
                     checkbox.setAttribute("disabled","disabled");
                     $("#response").html("L'élève double");
                 }else{
-                    
+
                     checkbox.checked = true;
                     checkbox.removeAttribute("disabled");
                     $("#response").html("L'élève passe");
@@ -96,16 +96,17 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
             });
 
 
-            
+
 
 
         });//end of document ready
 
-        document.querySelector('#loader').style = "display:none";
-        document.querySelector('#tableView').style = "display:normal";
     }, function (error) {
+
         console.error(error)
     });
+    document.querySelector('#loader').style = "display:none";
+    document.querySelector('#tableView').style = "display:normal";
 
     $scope.requestHttp = function (url, method, callback) {
         if (method == 'GET') {
