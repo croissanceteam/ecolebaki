@@ -114,10 +114,7 @@ if (!isset($_SESSION['uid'])) {
                                     <div class="form-group" style="float:left;padding-right:1em;">
                                         <label for="year">ANNEES SCOLAIRES</label>
 
-                                        <select id="year" ng-model="cbo_year" ng-change="criteriaChanged()" class="chzn-select" style="width:100%">
-
-                                            <option>2017-2018</option>
-                                            <option>2018-2019</option>
+                                        <select id="year" ng-model="cbo_year" ng-options="item.year for item in years" ng-change="criteriaChanged()" class="chzn-select" style="width:100%">
 
                                         </select>
                                     </div>

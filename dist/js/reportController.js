@@ -1,4 +1,4 @@
-app.controller('CtrlStudent', function (factoryStudent,$scope,$filter) {
+app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
     // alert(document.querySelector('#lbl_year').innerHTML);
 
 
@@ -11,6 +11,14 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$filter) {
         document.querySelector('#buttonsPrint').style = "display:normal";
 
     });
+
+    $http.get('listyears').then(function (response) {
+        console.log('listyears : ',response.data);
+        $scope.years = response.data;
+        //for initialising the list by the first value : $scope.cbo_year = $scope.years[0];
+    }, function (error) {
+        console.log(error)
+    })
 
     $scope.criteriaChanged = function(){
       console.log('Criteria changed');
@@ -36,7 +44,7 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$filter) {
 
       $('#txt_feesTypeR').html($('.txt_feesType').html());
 
-      
+
     }
 
     $scope.sendRequestTab = function () {
@@ -191,8 +199,8 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$filter) {
         document.querySelector('#blockPrinter').style = "display:block";
         document.querySelector('#menuBar').style.display="none";
         document.querySelector('#header').style.display="none";
-        
-        
+
+
     }
     $scope.print=function(){
         document.querySelector('#btnprint').style.display="none";
