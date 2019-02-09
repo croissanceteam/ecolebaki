@@ -206,7 +206,7 @@ if (!isset($_SESSION['uid'])) {
 
                                                             <div class="form-group">
                                                                 <label class="control-label"  for="amount">Montant à payer</label>
-                                                                <input type="number" class="form-control" id="amount" name="amount" required>
+                                                                <input type="number" class="form-control" id="amount" name="amount" min="5" max="<?= $_SESSION['slices'][2]->_AMOUNT ?>" required>
                                                             </div>
                                                     </div>
                                                     <!-- /.col-lg-6 (nested) -->
@@ -273,7 +273,7 @@ if (!isset($_SESSION['uid'])) {
                 //     });
                 // }
 
-                
+
 
               // /Switchery
                 $("#pass_switcher").on('change', function () {
