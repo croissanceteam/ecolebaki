@@ -10,72 +10,89 @@ class PaymentController {
                     JOIN t_school_fees sfees ON pay._OBJECT=sfees._CODE
                     JOIN t_slice_payment spay ON spay._CODESLICE=pay._CODE_SLICE
                     WHERE pay._MATR=:matr AND pay._ANASCO=:anasco AND spay._ANASCO=:anasco";
-    private static $reqGetActualPupilsPaymentsList = "SELECT DISTINCT(pupils._ID) AS id, pupils._MAT AS matricule,UPPER(pupils._NAME) AS name_pupil,pupils._SEX AS gender,subscrit._CODE_CLASS AS level,subscrit._CODE_SECTION AS section
-                    FROM t_students pupils
-                    JOIN t_payment payments ON pupils._MAT=payments._MATR
-                    JOIN t_subscription subscrit ON pupils._MAT=subscrit._MATR_PUPIL
-                    WHERE payments._DEPARTMENT=:department AND subscrit._ANASCO=:year";
-    private static $reqGetPupilsPaymentsList = "SELECT DISTINCT(pupils._ID) AS id, pupils._MAT AS matricule,UPPER(pupils._NAME) AS name_pupil,pupils._SEX AS gender,subscrit._CODE_CLASS AS level,subscrit._CODE_SECTION AS section, subscrit._ANASCO
-                    FROM t_students pupils
-                    JOIN t_payment payments ON pupils._MAT=payments._MATR
-                    JOIN t_subscription subscrit ON pupils._MAT=subscrit._MATR_PUPIL
-                    WHERE payments._DEPARTMENT=:department AND subscrit._ANASCO=:year";
+    // private static $reqGetActualPupilsPaymentsList = "SELECT DISTINCT(pupils._ID) AS id, pupils._MAT AS matricule,UPPER(pupils._NAME) AS name_pupil,pupils._SEX AS gender,subscrit._CODE_CLASS AS level,subscrit._CODE_SECTION AS section
+    //                 FROM t_students pupils
+    //                 JOIN t_payment payments ON pupils._MAT=payments._MATR
+    //                 JOIN t_subscription subscrit ON pupils._MAT=subscrit._MATR_PUPIL
+    //                 WHERE payments._DEPARTMENT=:department AND subscrit._ANASCO=:year";
+    // private static $reqGetPupilsPaymentsList = "SELECT DISTINCT(pupils._ID) AS id, pupils._MAT AS matricule,UPPER(pupils._NAME) AS name_pupil,pupils._SEX AS gender,subscrit._CODE_CLASS AS level,subscrit._CODE_SECTION AS section, subscrit._ANASCO
+    //                 FROM t_students pupils
+    //                 JOIN t_payment payments ON pupils._MAT=payments._MATR
+    //                 JOIN t_subscription subscrit ON pupils._MAT=subscrit._MATR_PUPIL
+    //                 WHERE payments._DEPARTMENT=:department AND subscrit._ANASCO=:year";
     private static $reqInsertPay = "INSERT INTO t_payment (_IDPAY,_MATR,_CODE_SLICE,_OBJECT,_DATEPAY,_TIMEPAY,_AMOUNT,_ANASCO,_USER_AGENT,_DEPARTMENT)
                     VALUES(:idpay,:matr,:codeslice,:objectpay,:datepay,:timepay,:amount,:anasco,:user,:department)";
     private static $reqGetSliceInfos = "SELECT spay.*, sfees._LABEL AS _OBJECT_PAY
                     FROM t_slice_payment spay
                     JOIN t_school_fees sfees ON sfees._CODE = spay._CODE_FEES
                     WHERE spay._CODESLICE =:code AND spay._ANASCO=:anasco";
-    private static $getSliceSumPaidByPupil = "SELECT SUM(_AMOUNT) AS sum_slice_paid FROM t_payment WHERE _CODE_SLICE = ? AND _MATR = ?";
+    // private static $getSliceSumPaidByPupil = "SELECT SUM(_AMOUNT) AS sum_slice_paid FROM t_payment WHERE _CODE_SLICE = ? AND _MATR = ?";
 
-
-    public static function getPupilsPaymentsList($direction, $year) {
-        $query_execute = queryDB(self::$reqGetPupilsPaymentsList,[
-            'department' => $direction,
-            'year' => $year
-        ]);
-
-        $data = $query_execute->fetchAll();
-        for ($i = 0; $i < sizeof($data); $i++) {
-            $matricule = $data[$i]->matricule;
-            $pupil_payments_infos = queryDB(self::$reqGetPupilPaymentsInfos, ['matr' => $matricule, 'anasco' => $year]);
-            $pupil_infos[$i] = [
-                'id' => $data[$i]->id,
-                'matricule' => $matricule,
-                'name_pupil' => $data[$i]->name_pupil,
-                'gender' => $data[$i]->gender,
-                'level' => $data[$i]->level,
-                'section' => $data[$i]->section,
-                'payinfo' => $pupil_payments_infos->fetchAll()
-            ];
-        }
-
-        return json_encode($pupil_infos);
+    public static function getPupilSliceBalanceToPay($param)
+    {
+        $sliceSumPaid = self::getSliceSumPaidByPupil($param['slice'],$param['year'],$param['matr']);
+        $sliceInfos = self::getSlice($param['slice'],$param['year']);
+        $balance = $sliceInfos->_AMOUNT - $sliceSumPaid->sum;
+        return $balance;
     }
-    public static function getActualPupilsPaymentsList() {
 
-        $query_execute = queryDB(self::$reqGetPupilsPaymentsList, [
-            'department' => $_SESSION['direction'],
-            'year' => $_SESSION['anasco']
+    private static function getSlice($slice,$year)
+    {
+        $req = "SELECT spay.*, sfees._LABEL AS _OBJECT_PAY
+              FROM t_slice_payment spay JOIN t_school_fees sfees ON sfees._CODE = spay._CODE_FEES
+              WHERE spay._CODESLICE =:code AND spay._ANASCO=:anasco";
+        $result = queryDB($req, [
+          'code' => $slice,
+          'anasco' => $year
         ]);
+        return $result->fetch();
+    }
 
-        $data = $query_execute->fetchAll();
-        $response = json_encode($data);
-        for ($i = 0; $i < sizeof($data); $i++) {
-            $matricule = $data[$i]->matricule;
-            $pupil_payments_infos = queryDB(self::$reqGetPupilPaymentsInfos, ['matr' => $matricule, 'anasco' => $_SESSION['anasco']]);
-            $pupil_infos[$i] = [
-                'id' => $data[$i]->id,
-                'matricule' => $matricule,
-                'name_pupil' => $data[$i]->name_pupil,
-                'gender' => $data[$i]->gender,
-                'level' => $data[$i]->level,
-                'section' => $data[$i]->section,
-                'payinfo' => $pupil_payments_infos->fetchAll()
-            ];
-        }
-        // echo 'Anne: '. $_SESSION['anasco'];
-        return json_encode($pupil_infos);
+    private static function getSliceSumPaidByPupil($slice,$year,$matr)
+    {
+        $sql = "SELECT SUM(_AMOUNT) AS sum FROM t_payment WHERE _CODE_SLICE = :codeslice AND _ANASCO = :year  AND _MATR = :matr";
+        $result = queryDB($sql,[
+          'codeslice' =>  $slice,
+          'year'  =>  $year,
+          'matr'  =>  $matr
+        ]);
+        return $result->fetch();
+    }
+
+    public static function getPupilsPaymentsList($year = '')
+    {
+      // $year = $year !== '' ? $year : $_SESSION['anasco'];
+      if($year === '') $year = $_SESSION['anasco'];
+
+      $req1 = "SELECT DISTINCT(pupils._ID) AS id, pupils._MAT AS matricule,UPPER(pupils._NAME) AS name_pupil,pupils._SEX AS gender,subscrit._CODE_CLASS AS level,subscrit._CODE_SECTION AS section, subscrit._ANASCO
+              FROM t_students pupils
+              JOIN t_payment payments ON pupils._MAT=payments._MATR
+              JOIN t_subscription subscrit ON pupils._MAT=subscrit._MATR_PUPIL
+              WHERE subscrit._ANASCO=:year";
+      $req2 = "SELECT pay._IDPAY AS id_pay, spay._LABELSLICE AS slice_pay, sfees._LABEL AS fee_object, pay._AMOUNT AS amount_payed, pay._DATEPAY AS date_pay
+              FROM t_payment pay
+              JOIN t_school_fees sfees ON pay._OBJECT=sfees._CODE
+              JOIN t_slice_payment spay ON spay._CODESLICE=pay._CODE_SLICE
+              WHERE pay._MATR=:matr AND pay._ANASCO=:anasco AND spay._ANASCO=:anasco";
+
+      $result = queryDB($req1,['year' => $year]);
+      $data = $result->fetchAll();
+
+      for ($i = 0; $i < sizeof($data); $i++) {
+          $matricule = $data[$i]->matricule;
+          $pupil_payments_infos = queryDB($req2, ['matr' => $matricule, 'anasco' => $year]);
+          $pupil_infos[$i] = [
+              'id' => $data[$i]->id,
+              'matricule' => $matricule,
+              'name_pupil' => $data[$i]->name_pupil,
+              'gender' => $data[$i]->gender,
+              'level' => $data[$i]->level,
+              'section' => $data[$i]->section,
+              'payinfo' => $pupil_payments_infos->fetchAll()
+          ];
+      }
+
+      return json_encode($pupil_infos);
     }
 
     public function getFees() {
@@ -96,15 +113,11 @@ class PaymentController {
         $db = getDB();
         $payGenerate = "PAY-" . time();
 
-        $resultSliceInfos = queryDB(self::$reqGetSliceInfos, [
-          'code' => $data['slice'],
-          'anasco' => $data['anasco']
-        ]);
+        $sliceInfos = self::getSlice($data['slice'],$data['anasco']);
 
-        if ($resultSliceInfos == TRUE) {
 
-            $ds = $resultSliceInfos->fetchAll();
-            $sliceInfos = $ds[0];
+        if ($sliceInfos) {
+
             $resultInsert = queryDB(self::$reqInsertPay, [
                 'idpay' => $payGenerate,
                 'matr' => $data['mat_pupil'],
@@ -118,12 +131,11 @@ class PaymentController {
                 'department' => $_SESSION['direction']
             ]);
 
-            $result = queryDB(self::$getSliceSumPaidByPupil, [$data['slice'], $data['mat_pupil']]);
-            $sliceSumPaid = $result->fetch();
+            $sliceSumPaid = self::getSliceSumPaidByPupil($data['slice'],$data['anasco'],$data['mat_pupil']);
 
-            if ($resultInsert == TRUE) {
+            if ($resultInsert) {
                 //varaibles for the invoice data here
-                $remaining_amount = $sliceInfos->_AMOUNT - $sliceSumPaid->sum_slice_paid;
+                $remaining_amount = $sliceInfos->_AMOUNT - $sliceSumPaid->sum;
 
                 $_SESSION['namePupil'] = $data['name_pupil'];
                 $_SESSION['idpay'] = $payGenerate;
@@ -190,9 +202,11 @@ class PaymentController {
         );
         $response = $sql_prepare->fetchAll();
 
-        $Query = "SELECT count(DISTINCT(students._MAT)) AS COUNTER FROM t_students students JOIN t_payment payment ON students._MAT =payment._MATR" .
-                " JOIN t_subscription subscript ON students._MAT=subscript._MATR_PUPIL" .
-                " WHERE payment._ANASCO=:year AND subscript._CODE_CLASS=:level AND subscript._CODE_SECTION=:option AND payment._DEPARTMENT=:departement";
+        $Query = "SELECT count(DISTINCT(students._MAT)) AS COUNTER
+                FROM t_students students
+                JOIN t_payment payment ON students._MAT =payment._MATR
+                JOIN t_subscription subscript ON students._MAT=subscript._MATR_PUPIL
+                WHERE payment._ANASCO=:year AND subscript._CODE_CLASS=:level AND subscript._CODE_SECTION=:option AND payment._DEPARTMENT=:departement";
 
         $sql_prepare = $db->prepare($Query);
         $sql_prepare->execute(

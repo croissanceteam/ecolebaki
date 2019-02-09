@@ -41,7 +41,7 @@ session_start();
       /* content: "*"; */
       margin-left: 8px;
       top:7px;
-      
+
       font-family: 'FontAwesome';
       font-weight: normal;
       font-size: 10px;
@@ -142,6 +142,7 @@ session_start();
                                         <div class="form-group">
                                             <label class="control-label required" for="inputSuccess">Nom complet</label>
                                             <input type="text" name="name" class="form-control" required>
+
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label required">Genre</label>
@@ -232,7 +233,7 @@ session_start();
                                         </div>
                                         <div class="form-group">
                                             <label class="control-label required"  for="inputSuccess">Montant</label>
-                                            <input type="number" name="amount" class="form-control" min="1" required>
+                                            <input type="number" name="amount" class="form-control" min="5" max="<?= $_SESSION['slices'][2]->_AMOUNT ?>" required>
                                         </div>
                                         <div class="form-group" style="display:none;">
                                             <label class="control-label" for="inputSuccess">Base64</label>

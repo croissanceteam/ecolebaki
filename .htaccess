@@ -7,7 +7,7 @@ RewriteRule ^subscrit$ pages/subscription.php
 RewriteRule ^listpupils/(.*)/(.*)$ controllers/TaskPupils.php?depart=$1&year=$2
 RewriteRule ^listpupils$ controllers/TaskPupils.php
 RewriteRule ^viewpupils$ pages/viewpupils.php
-RewriteRule ^listpayments/(.*)/(.*)$ controllers/TaskPayment.php?depart=$1&year=$2
+RewriteRule ^listpayments/(.*)$ controllers/TaskPayment.php?year=$1
 RewriteRule ^listpayments$ controllers/TaskPayment.php
 RewriteRule ^addpayment$ controllers/TaskPayment.php
 RewriteRule ^loadslices$ controllers/TaskPayment.php
@@ -21,3 +21,4 @@ RewriteRule ^reinscriptions$ pages/reinscriptions.php
 RewriteRule ^reenrol$ controllers/TaskPupils.php
 RewriteRule ^pupilstoreenrol$ controllers/TaskPupils.php
 RewriteRule ^getdashboarddata$ controllers/TaskPupils.php
+RewriteRule ^paymentprerequis/(.*)/(.*)/(.*)$ controllers/TaskPayment.php?matr=$1&slice=$2&&year=$3

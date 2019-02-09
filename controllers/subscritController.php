@@ -92,7 +92,7 @@ class SubscritController
             }else{
                 $_SESSION["level"]=$level."ème ".$section;
             }
-            $result = queryDB("SELECT _AMOUNT FROM t_slice_payment WHERE _CODESLICE = '1TRF'");
+            $result = queryDB("SELECT _AMOUNT FROM t_slice_payment WHERE _CODESLICE = '1TRF' AND _ANASCO = ?",[$_SESSION['anasco']]);
             $sliceAmount = $result->fetch();
             $total1TRF = $sliceAmount->_AMOUNT;
             // $_SESSION['subject']="Inscription";

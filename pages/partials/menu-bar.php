@@ -6,6 +6,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
+                <span class="hidden" id="currency">USD</span>
                 <a id="title_navbar" class="navbar-brand" href="index.html">ECOLE BAKI | <? echo ucwords($_SESSION['direction'])?></a>
             </div>
             <!-- /.navbar-header -->
