@@ -215,6 +215,9 @@
                         <li class="divider"></li>
                         <li><a href="logout"><i class="fa fa-sign-out fa-fw"></i> Se déconnecter</a>
                         </li>
+                        <li class="divider"></li>
+                        <li><a href="#" data-toggle="modal" data-target="#newPassModal"><i class="fa fa-sign-out fa-fw"></i> Changer mon mot de passe</a>
+                        </li>
                     </ul>
                     <!-- /.dropdown-user -->
                 </li>
@@ -353,3 +356,38 @@
             </div>
             <!-- /.navbar-static-side -->
         </nav>
+
+        <div class="modal" id="newPassModal" tabindex="-1" role="dialog" data-backdrop="static">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title">Changement de mon mot de passe</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form id="change-password-form">
+                <div class="modal-body">
+
+                  <div class="form-group">
+                    <label class="col-form-label">Mot de passe actuel</label>
+                    <input type="text" class="form-control" name="actual-password" id="actual-password" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-form-label">Nouveau mot de passe</label>
+                    <input type="text" class="form-control" name="new-password" id="new-password" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-form-label">Nouveau mot de passe</label>
+                    <input type="text" class="form-control" name="new-password-again" id="new-password-again" placeholder="Retaper le nouveau mot de passe" required>
+                  </div>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Enregistrer le changement</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>

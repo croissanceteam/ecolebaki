@@ -260,6 +260,8 @@ if (!isset($_SESSION['uid'])) {
         <!-- Switchery -->
         <script src="vendor/switchery/dist/switchery.min.js"></script>
 
+        <script src="dist/js/app.js"></script>
+
         <script>
             $(document).ready(function () {
               // Switchery

@@ -290,6 +290,8 @@ if (!isset($_SESSION['uid'])) {
 
         <!-- Custom Theme JavaScript -->
         <script src="dist/js/sb-admin-2.js"></script>
+
+        <script src="dist/js/app.js"></script>
         <script>
             $(document).ready(function () {
                 var lineChart = document.querySelector('#line-chart');

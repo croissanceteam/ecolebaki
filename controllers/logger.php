@@ -15,31 +15,25 @@ class Logger {
     public function getLogger($userid, $pwd) {
         $db = getDB();
 
+        $req = "SELECT _MATR,_USERNAME,_PWD AS password,_PRIORITY,_CODE_DIRECTION,_ANASCO,_NAME FROM t_login login
+                JOIN t_agent agent ON login._MATR_AGENT=agent._MATR
+                WHERE login._USERNAME=?";
 
-        $Query = "SELECT _MATR,_USERNAME,_PRIORITY,_CODE_DIRECTION,_ANASCO,_NAME FROM t_login login
-                    JOIN t_agent agent ON login._MATR_AGENT=agent._MATR
-                    WHERE login._USERNAME=:userid AND login._PWD=:pwd";
+        $SQL_PREPARE = $db->prepare($req);
+        $SQL_PREPARE->execute([$userid]);
+        $Login = $SQL_PREPARE->fetch();
 
-        $SQL_PREPARE = $db->prepare($Query);
-        $SQL_PREPARE->execute(array(
-            "userid" => $userid,
-            "pwd" => md5($pwd)
-        ));
-        $Login = $SQL_PREPARE->fetchAll(PDO::FETCH_OBJ);
 
-        if (sizeof($Login) == 1) {
+        if ($Login && password_verify($pwd, $Login->password)) {
 
             $QuerySlice = "SELECT * FROM t_slice_payment WHERE _ANASCO = ?";
             $SQL_PREPARE = $db->prepare($QuerySlice);
-            $SQL_PREPARE->execute([$Login[0]->_ANASCO]);
-            $SlicePayment = $SQL_PREPARE->fetchAll(PDO::FETCH_OBJ);
+            $SQL_PREPARE->execute([$Login->_ANASCO]);
+            $SlicePayment = $SQL_PREPARE->fetchAll();
 
-            $users = $this->getCounterStats($Login[0]->_CODE_DIRECTION);
-            $pupils = $this->getPupils
-                    (
-                    $Login[0]->_CODE_DIRECTION, $Login[0]->_PRIORITY, $Login[0]->_ANASCO
-            );
-            $agents = $this->getAgents($Login[0]->_CODE_DIRECTION, $Login[0]->_PRIORITY);
+            $users = $this->getCounterStats($Login->_CODE_DIRECTION);
+            $pupils = $this->getPupils($Login->_CODE_DIRECTION, $Login->_PRIORITY, $Login->_ANASCO);
+            $agents = $this->getAgents($Login->_CODE_DIRECTION, $Login->_PRIORITY);
             $logged = array
                 (
                 'login' => $Login,
@@ -57,18 +51,12 @@ class Logger {
 
     public function getCounterStats($direction) {
         $db = getDB();
-        $Query = "SELECT _MATR,_USERNAME,_PRIORITY,_CODE_DIRECTION,_ANASCO FROM t_login " .
-                " login JOIN t_agent agent ON login._MATR_AGENT=agent._MATR" .
-                " WHERE agent._CODE_DIRECTION=:direction";
+        $Query = "SELECT _MATR,_USERNAME,_PRIORITY,_CODE_DIRECTION,_ANASCO FROM t_login
+                  login JOIN t_agent agent ON login._MATR_AGENT=agent._MATR
+                  WHERE agent._CODE_DIRECTION=:direction";
         $sql = $db->prepare($Query);
-        $sql->execute
-                (
-                array
-                    (
-                    'direction' => $direction
-                )
-        );
-        $response = $sql->fetchAll(PDO::FETCH_OBJ);
+        $sql->execute(['direction' => $direction]);
+        $response = $sql->fetchAll();
         return $response;
     }
 
@@ -85,7 +73,7 @@ class Logger {
             'direction' => $direction,
             'anasco' => $anasco
         ]);
-        $response = $sql->fetchAll(PDO::FETCH_OBJ);
+        $response = $sql->fetchAll();
 
         return $response;
     }

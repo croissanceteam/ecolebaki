@@ -16,11 +16,11 @@ if (!empty($_POST['user']) && !empty($_POST['pwd'])) {
                      $pupils=$response['pupils'];
                      $agents=$response['agents'];
                      $years=$response['years'];
-                     $_SESSION['uid']=$login[0]->_USERNAME;
-                     $_SESSION['username']=$login[0]->_NAME;
-                     $_SESSION['direction']=$login[0]->_CODE_DIRECTION;
-                     $_SESSION['priority']=$login[0]->_PRIORITY;
-                     $_SESSION['anasco']=$login[0]->_ANASCO;
+                     $_SESSION['uid']=$login->_USERNAME;
+                     $_SESSION['username']=$login->_NAME;
+                     $_SESSION['direction']=$login->_CODE_DIRECTION;
+                     $_SESSION['priority']=$login->_PRIORITY;
+                     $_SESSION['anasco']=$login->_ANASCO;
                     //  $_SESSION['slices']=$slices[0];
                      $_SESSION['slices']=$slices;
                      $_SESSION['counter_users']=sizeof($users);
