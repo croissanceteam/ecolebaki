@@ -213,7 +213,7 @@
                         <li style="display:none;"><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                         </li>
                         <li class="divider"></li>
-                        <li><a href="logout"><i class="fa fa-sign-out fa-fw"></i> Se déconnecter</a>
+                        <li><a href="logout" id="lungwa"><i class="fa fa-sign-out fa-fw"></i> Se déconnecter</a>
                         </li>
                         <li class="divider"></li>
                         <li><a href="#" data-toggle="modal" data-target="#newPassModal"><i class="fa fa-sign-out fa-fw"></i> Changer mon mot de passe</a>
@@ -368,25 +368,26 @@
               </div>
               <form id="change-password-form">
                 <div class="modal-body">
-
                   <div class="form-group">
                     <label class="col-form-label">Mot de passe actuel</label>
-                    <input type="text" class="form-control" name="actual-password" id="actual-password" required>
+                    <input type="password" class="form-control" name="actual-password" id="actual-password" required>
+                    <input type="text" class="hidden" name="username" id="username" value="<?= $_SESSION['uid'] ?>">
                   </div>
                   <div class="form-group">
                     <label class="col-form-label">Nouveau mot de passe</label>
-                    <input type="text" class="form-control" name="new-password" id="new-password" required>
+                    <input type="password" class="form-control" name="new-password" id="new-password" required>
                   </div>
                   <div class="form-group">
                     <label class="col-form-label">Nouveau mot de passe</label>
-                    <input type="text" class="form-control" name="new-password-again" id="new-password-again" placeholder="Retaper le nouveau mot de passe" required>
+                    <input type="password" class="form-control" name="new-password-again" id="new-password-again" placeholder="Retaper le nouveau mot de passe" required>
                   </div>
-
                 </div>
+                <!-- /.modal-body -->
                 <div class="modal-footer">
                   <button type="submit" class="btn btn-primary">Enregistrer le changement</button>
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
                 </div>
+                <!-- /.modal-footer -->
               </form>
             </div>
           </div>

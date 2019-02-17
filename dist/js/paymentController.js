@@ -51,7 +51,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                 var index = e.target._DT_CellIndex.row;
 
                 $('#error_msg').html("");
-                document.querySelector('#show-pupil-payments').click();
+                document.querySelector('#toggle-pupil-payments').click();
                 document.querySelector('#LabelName').innerHTML = data[index].name_pupil;
                 document.querySelector('#mat_pupil').value = data[index].matricule;
                 document.querySelector('#name_pupil').value = data[index].name_pupil;
@@ -101,12 +101,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                     }
                 });
                 // alert( 'You clicked on '+data[index].id+'\'s row' );
-
-
             });
-
-
-
         });//end of document ready
 
         document.querySelector('#loader').style = "display:none";
@@ -204,7 +199,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
             console.log('Data: ',data[index]);
             console.log("Last list pay: ",data[index].payinfo);
 
-            document.querySelector('#show-pupil-payments').click();
+            document.querySelector('#toggle-pupil-payments').click();
             document.querySelector('#LabelName').innerHTML = data[index].name_pupil;
             document.querySelector('#mat_pupil').value = data[index].matricule;
             document.querySelector('#name_pupil').value = data[index].name_pupil;
@@ -266,7 +261,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
     {
       var matr = $('#mat_pupil').val();
       var year = $('#anasco').val();
-
+      $('#error_msg').html("");
       console.log($scope.sliceCode);
       var url = 'paymentprerequis/'+ matr + '/'+ $scope.sliceCode + '/' + year;
       $http.get(url).then(function (response) {
@@ -284,7 +279,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
     $scope.submitPayment = function ()
     {
 
-        var matricule = $('#mat_pupil').val();
+        // var matricule = $('#mat_pupil').val();
         var slice = $('#slice').val();
         var amount = $('#amount').val();
         var mydata = $('#add_payment_form').serialize();
@@ -294,6 +289,8 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
             $('#error_msg').html("Veuillez renseigner le type de frais");
         } else if (amount == "") {
             $('#error_msg').html("Veuillez renseigner le montant");
+        } else if (amount == 0) {
+            $('#error_msg').html("Le montant saisi est incorrect");
         } else if ($('#mat_pupil').val() == '') {
             $('#error_msg').html("Le paiement ne peut pas s'effectuer");
         } else {
@@ -302,47 +299,109 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
             // var diff = amount > balance;
             // console.log('Vrai ou faux ?',diff);
             if(amount > balance){
-              $('#error_msg').html("Le montant payé ne peut être supérieur au montant à payer pour cette tranche, qui est de " + $('#currency').text() + ' ' + $scope.balance);
+              if(balance == 0){
+                $('#error_msg').html("L'élève a déjà soldé ce trimestre");
+              }else{
+                $('#error_msg').html("Le montant payé ne peut être supérieur au montant à payer pour cette tranche, qui est de " + $('#currency').text() + ' ' + $scope.balance);
+              }
             }else{
               $('#error_msg').html("");
               $('#add_payment_form')[0].reset();
+              // $('#pupilPaymentsModal').modal('hide');
+              document.querySelector('#toggle-pupil-payments').click();
+              document.getElementById("confirm-text").textContent = "Validez-vous ce paiement ?";
+              document.getElementById("confirm-body").innerHTML =
+              "<br><h4>Elève : " + $('#name_pupil').val() + "</h4><h4>Matricule : " + $('#mat_pupil').val() +
+              "</h4><h4>Tranche : " + slice + "</h4><h4>Montant : " +
+              amount + " " + $('#currency').text() + "</h4>";
+              $( "#dialog-confirm" ).dialog({
+                  resizable: false,
+                  height: "auto",
+                  width: 400,
+                  modal: true,
+                  buttons: {
+                      "Oui": function() {
+                          $(this).dialog( "close" );
 
-              $.ajax({
-                  type: 'POST',
-                  url: 'addpayment',
-                  data: mydata,
-                  success: function (result) {
-                      console.log("result");
-                      console.log(result);
-                      document.querySelector('#show-pupil-payments').click();
+                          $.ajax({
+                              type: 'POST',
+                              url: 'addpayment',
+                              data: mydata,
+                              success: function (result) {
+                                  console.log("result");
+                                  console.log(result);
 
-                      if (result == 1) {
-                          $('#success_alert').html("Paiement effectué!");
-                          document.querySelector('#success_alert').style = "display:normal";
-                          document.querySelector("#invoice").click();
-                          //window.location.href = "invoice";
-                          //window.open("http://localhost/~jonathan/ecolebaki2/invoice");
-                          setTimeout(function () {
-                              window.location.reload();
-                          }, 2000);
-                      } else {
-                          $('#danger_alert').html("L'opération a échoué!");
-                          document.querySelector('#danger_alert').style = "display:normal";
-                          setTimeout(function () {
-                              document.getElementById('danger_alert').style = "display:none";
-                          }, 2000);
+                                  if (result == 1) {
+                                      $('#success_alert').html("Paiement effectué!");
+                                      document.querySelector('#success_alert').style = "display:normal";
+                                      document.querySelector("#invoice").click();
+                                      //window.location.href = "invoice";
+                                      //window.open("http://localhost/~jonathan/ecolebaki2/invoice");
+                                      setTimeout(function () {
+                                          window.location.reload();
+                                      }, 2000);
+                                  } else {
+                                      $('#danger_alert').html("L'opération a échoué!");
+                                      document.querySelector('#danger_alert').style = "display:normal";
+                                      setTimeout(function () {
+                                          document.getElementById('danger_alert').style = "display:none";
+                                      }, 2000);
+                                  }
+
+                              },
+                              error: function () {
+                                  $('#danger_alert').html("L'opération n'a pas abouti!");
+                                  document.querySelector('#danger_alert').style = "display:normal";
+                                  setTimeout(function () {
+                                      document.getElementById('danger_alert').style = "display:none";
+                                  }, 2000);
+                              }
+
+                          });
+                      },
+                      "Non": function() {
+                          $(this).dialog( "close" );
+                          console.log('Non');
                       }
-
-                  },
-                  error: function () {
-                      $('#danger_alert').html("L'opération n'a pas abouti!");
-                      document.querySelector('#danger_alert').style = "display:normal";
-                      setTimeout(function () {
-                          document.getElementById('danger_alert').style = "display:none";
-                      }, 2000);
                   }
-
               });
+
+              // $.ajax({
+              //     type: 'POST',
+              //     url: 'addpayment',
+              //     data: mydata,
+              //     success: function (result) {
+              //         console.log("result");
+              //         console.log(result);
+              //         document.querySelector('#toggle-pupil-payments').click();
+              //
+              //         if (result == 1) {
+              //             $('#success_alert').html("Paiement effectué!");
+              //             document.querySelector('#success_alert').style = "display:normal";
+              //             document.querySelector("#invoice").click();
+              //             //window.location.href = "invoice";
+              //             //window.open("http://localhost/~jonathan/ecolebaki2/invoice");
+              //             setTimeout(function () {
+              //                 window.location.reload();
+              //             }, 2000);
+              //         } else {
+              //             $('#danger_alert').html("L'opération a échoué!");
+              //             document.querySelector('#danger_alert').style = "display:normal";
+              //             setTimeout(function () {
+              //                 document.getElementById('danger_alert').style = "display:none";
+              //             }, 2000);
+              //         }
+              //
+              //     },
+              //     error: function () {
+              //         $('#danger_alert').html("L'opération n'a pas abouti!");
+              //         document.querySelector('#danger_alert').style = "display:normal";
+              //         setTimeout(function () {
+              //             document.getElementById('danger_alert').style = "display:none";
+              //         }, 2000);
+              //     }
+              //
+              // });
             }
         }
         return false;

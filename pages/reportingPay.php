@@ -453,6 +453,7 @@ if (!isset($_SESSION['uid'])) {
         <script src="dist/js/services.js"></script>
         <script src="dist/js/reportController.js"></script>
         <script src="dist/js/bootstrap-datepicker.min.js"></script>
+        <script src="dist/js/app.js"></script>
 
 
     </body>

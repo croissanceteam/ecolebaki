@@ -22,3 +22,4 @@ RewriteRule ^reenrol$ controllers/TaskPupils.php
 RewriteRule ^pupilstoreenrol$ controllers/TaskPupils.php
 RewriteRule ^getdashboarddata$ controllers/TaskPupils.php
 RewriteRule ^paymentprerequis/(.*)/(.*)/(.*)$ controllers/TaskPayment.php?matr=$1&slice=$2&&year=$3
+RewriteRule ^chactpwd$ controllers/TaskLogger.php

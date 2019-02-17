@@ -279,6 +279,7 @@ session_start();
     <script src="dist/js/sb-admin-2.js"></script>
     <script src="dist/js/bootstrap-datepicker.min.js"></script>
     <script src="dist/js/camera.js"></script>
+    <script src="dist/js/app.js"></script>
     <script>
 
 

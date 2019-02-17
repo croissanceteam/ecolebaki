@@ -12,6 +12,51 @@ class Logger {
     private $db;
     private $logged = "";
 
+    public function changePassword($param)
+    {
+      try {
+        if($param['new-password'] === $param['new-password-again']){
+          $db = getDB();
+
+          $req = "SELECT _USERNAME,_PWD AS password FROM t_login WHERE t_login._USERNAME=?";
+          $result = queryDB($req,[$param['username']])->fetch();
+
+          if($result && password_verify($param['actual-password'],$result->password)){
+              $req = "UPDATE t_login SET _PWD=:newpass WHERE _USERNAME=:username";
+              $newpass = password_hash($param['new-password'],PASSWORD_BCRYPT);
+              $result = queryDB($req,[
+                  'username'  =>  $param['username'],
+                  'newpass' =>  $newpass
+              ]);
+              if($result)
+                return 1;
+              else
+                return 0;
+          }else{
+              $_SESSION['nbr_typepass_try']--;
+              $text = $_SESSION['nbr_typepass_try'] === 1 ? " essai." : " essais.";
+
+              if($_SESSION['nbr_typepass_try'] === 0){
+                 //add a script to lock the user before logging him out (before the return line).
+                  return 4;
+              }
+
+              return "Le mot de passe est incorrect. Veuillez retaper. Il vous reste ".$_SESSION['nbr_typepass_try'].$text;
+          }
+          // return json_encode(count($result));
+        }else{
+          return "Vous avez mal retapé le nouveau mot de passe. Veuillez réessayer.";
+        }
+      } catch (\PDOException $ex) {
+            return $ex->getMessage();
+      } catch (\Exception $e) {
+
+      }
+
+
+
+    }
+
     public function getLogger($userid, $pwd) {
         $db = getDB();
 
@@ -19,10 +64,7 @@ class Logger {
                 JOIN t_agent agent ON login._MATR_AGENT=agent._MATR
                 WHERE login._USERNAME=?";
 
-        $SQL_PREPARE = $db->prepare($req);
-        $SQL_PREPARE->execute([$userid]);
-        $Login = $SQL_PREPARE->fetch();
-
+        $Login = queryDB($req,[$userid])->fetch();
 
         if ($Login && password_verify($pwd, $Login->password)) {
 
@@ -64,9 +106,9 @@ class Logger {
         $db = getDB();
 
         $Query = "SELECT DISTINCT(students._MAT),students._NAME,students._SEX,students._PICTURE
-                    FROM t_students students
-                    JOIN t_payment pay ON students._MAT=pay._MATR
-                    WHERE pay._DEPARTMENT = :direction AND pay._ANASCO = :anasco";
+                  FROM t_students students
+                  JOIN t_payment pay ON students._MAT=pay._MATR
+                  WHERE pay._DEPARTMENT = :direction AND pay._ANASCO = :anasco";
         // " GROUP BY students._MAT";
         $sql = $db->prepare($Query);
         $sql->execute([

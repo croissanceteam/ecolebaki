@@ -3,7 +3,7 @@
     if (!isset($_SESSION['uid'])) {
         header('Location:login');
     }
-    
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -71,7 +71,7 @@
                             <?php echo $_SESSION['anasco']?>
                         </span>
                     </label>
-                   
+
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -88,7 +88,7 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                          
+
                         <ul class="nav nav-tabs" >
                         <li class="active"><a href="#{{activeTab.year}}" data-toggle="tab">{{activeTab.year}}</a>
                         </li>
@@ -99,11 +99,11 @@
                             <!-- Tab panes -->
                             <div class="tab-content" >
                                 <div class="tab-pane fade in active" id="{{activeTab.year}}">
-                                    
+
                                     <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                     <tr>
-                                        
+
                                         <th>Matricule</th>
                                         <th>Nom de l'élève</th>
                                         <th>Genre</th>
@@ -112,17 +112,17 @@
                                     </tr>
                                 </thead>
                                 <tbody style="cursor:pointer">
-                                   
-                                  
+
+
                                 </tbody>
                             </table>
                                 </div>
                                 <div ng-repeat="data in list_years" class="tab-pane fade" id="year{{$index}}">
-                                  
+
                                     <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables{{$index}}">
                                 <thead>
                                     <tr>
-                                        
+
                                         <th>Matricule</th>
                                         <th>Nom de l'élève</th>
                                         <th>Genre</th>
@@ -131,14 +131,14 @@
                                     </tr>
                                 </thead>
                                 <tbody style="cursor:pointer">
-                                   
-                                  
+
+
                                 </tbody>
                             </table>
                                 </div>
-                              
-                                
-                                
+
+
+
                             </div>
                         </div>
             </div>
@@ -160,8 +160,8 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             Remplissez le formulaire
-                            
-                      
+
+
                         </div>
                         <div class="panel-body">
                         <div style="padding-bottom:2em;display:inline-block;width:200px;">
@@ -246,7 +246,7 @@
                                         </div>
                                         <label>Date de naissance</label>
                                         <div class="input-group date dp" style="" data-provider="datepicker">
-                                            
+
                                                 <input id="birthday" style="" placeholder="From" type="text" name="name" class="form-control" />
                                                 <div class="input-group-addon">
                                                     <span class="fa fa-th"></span>
@@ -277,7 +277,7 @@
                                             <label class="control-label" for="inputSuccess">Base64</label>
                                             <input name="picture" id="picture" type="text" class="form-control">
                                         </div>
-                                        
+
 
                                     </form>
 
@@ -328,6 +328,7 @@
     <script src="dist/js/init.js"></script>
     <script src="dist/js/pupilController.js"></script>
     <script src="dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="dist/js/app.js"></script>
     <script>
     function changedSection(){
         var cboSection=document.querySelector('#cboSection');

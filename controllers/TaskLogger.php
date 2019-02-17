@@ -3,7 +3,7 @@ session_start();
 require 'logger.php';
 
 function getLogger(){
-if (!empty($_POST['user']) && !empty($_POST['pwd'])) {
+  if (!empty($_POST['user']) && !empty($_POST['pwd'])) {
 
                  if (isset($_POST['user']) && isset($_POST['pwd'])) {
                  $log=new logger();
@@ -30,6 +30,7 @@ if (!empty($_POST['user']) && !empty($_POST['pwd'])) {
                      $_SESSION['counter_agents']=sizeof($agents);
                      $_SESSION['agents']=$agents;
                      $_SESSION['years_list']=$years;
+                     $_SESSION['nbr_typepass_try'] = 3;
                      echo '<meta http-equiv="refresh" content=0;URL=viewdashboard>';
 
                  }else{
@@ -54,9 +55,12 @@ $listener= $_SERVER['REQUEST_METHOD'];
 $url=$_SERVER['REQUEST_URI'];
 
  if ($listener=='POST') {
-
+   $user = new Logger();
+   if(isset($_POST['username']) && isset($_POST['actual-password'])){
+     echo $user->changePassword($_POST);
+   }
  }
 
  if ($listener=='GET' && isset($_SESSION['uid'])) {
-        echo '<meta http-equiv="refresh" content=0;URL=viewdashboard>';
-     }
+    echo '<meta http-equiv="refresh" content=0;URL=viewdashboard>';
+ }
