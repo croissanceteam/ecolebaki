@@ -19,6 +19,15 @@ ob_start();
         font-weight:bold;
         width:200px;
     }
+    div.header{
+      text-align: center;
+      margin:100px 0px 20px 0px;
+      border-top: 1px solid #424242;
+      border-bottom: 1px solid #424242;
+    }
+    .header h3{
+      margin: 5px;
+    }
 
 </style>
 <page backtop="10mm" backbottom="10mm" backleft="10mm" backright="10mm">
@@ -33,7 +42,7 @@ ob_start();
 
             </table>
 
-            <div style="width: 100%; height:2px; background-color:grey;"></div>
+            <!-- <div style="width: 100%; height:2px; background-color:grey;"></div> -->
         </div>
 
 
@@ -47,11 +56,11 @@ ob_start();
         </table>
     </page_footer>
 
-    <div style="text-align: center; margin-top:100px;">
-        <h2>PREUVE DE PAIEMENT</h2>
+    <div class="header">
+        <h3>PREUVE DE PAIEMENT</h3>
     </div>
-    <div style="width: 100%; height:2px; background-color:grey;margin-bottom:50px;"></div>
-    <div style="text-align: right;"><span style="font-weight:bold;">Date :</span> <?= date('d/m/Y'); ?></div>
+    <!-- <div style="width: 100%; height:2px; background-color:grey;margin-bottom:25px;"></div> -->
+    <div style="text-align: right;"><span style="font-weight:bold;"></span> Kinshasa, le <?= date('d/m/Y'); ?></div>
     <table style="font-size:14px;">
 
         <tr>

@@ -29,12 +29,13 @@ if (!isset($_SESSION['uid'])) {
         <!-- DataTables Responsive CSS -->
         <link href="vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
 
-        <!-- JQuery UI -->
-        <link href="vendor/jquery-ui/jquery-ui.min.css" rel="stylesheet">
-        <link href="vendor/jquery-ui/jquery-ui.theme.min.css" rel="stylesheet">
-        <link href="vendor/jquery-ui/jquery-ui.structure.min.css" rel="stylesheet">
+        <!-- include the core styles -->
+        <link rel="stylesheet" href="vendor/alertify/themes/alertify.core.css" />
+        <!-- include a theme, can be included into the core instead of 2 separate files -->
+        <link rel="stylesheet" href="vendor/alertify/themes/alertify.default.css" />
         <!-- Custom CSS -->
         <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+        <link href="dist/css/custom.css" rel="stylesheet" type="text/css">
 
         <!-- Custom Fonts -->
         <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -54,10 +55,21 @@ if (!isset($_SESSION['uid'])) {
                 text-align: center;
                 margin: 0 auto;
             }
+            .required:after {
+                color: #d00;
+                /* content: "*"; */
+                margin-left: 8px;
+                top:7px;
+
+                font-family: 'FontAwesome';
+                font-weight: normal;
+                font-size: 10px;
+                content: "\f069";
+            }
         </style>
     </head>
 
-    <body ng-app='app' ng-controller="ViewPupilsCtrl">
+    <body ng-app='app' ng-controller="PaymentsCtrl">
 
         <div id="wrapper">
 
@@ -67,8 +79,6 @@ if (!isset($_SESSION['uid'])) {
             <div id="page-wrapper">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div style="display: none;" class="alert alert-success" role="alert" id="success_alert"></div>
-                        <div style="display: none;" class="alert alert-danger" role="alert" id="danger_alert"></div>
                         <label class="page-header" style="width: 100%;font-size: 16px;">
                             <i class="fa fa-users"></i> Tableau des données | paiements
 
@@ -109,6 +119,7 @@ if (!isset($_SESSION['uid'])) {
                                         <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                             <thead>
                                                 <tr>
+                                                    <th>#</th>
                                                     <th>Matricule</th>
                                                     <th>Nom de l'élève</th>
                                                     <th>Genre</th>
@@ -127,7 +138,7 @@ if (!isset($_SESSION['uid'])) {
                                         <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables{{$index}}">
                                             <thead>
                                                 <tr>
-
+                                                    <th>#</th>
                                                     <th>Matricule</th>
                                                     <th>Nom de l'élève</th>
                                                     <th>Genre</th>
@@ -148,7 +159,7 @@ if (!isset($_SESSION['uid'])) {
                             </div>
                         </div>
                     </div>
-                    <button style="display:none;" id="toggle-pupil-payments" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#pupilPaymentsModal">
+                    <button style="display:none;" id="toggle-payments-modal" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#pupilPaymentsModal">
                         Launch Date after
                     </button>
                     <a href="invoice" target="_blank"><button style="display:none;" id="invoice_link">Show invoice</button></a>
@@ -159,7 +170,7 @@ if (!isset($_SESSION['uid'])) {
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                    <h4 class="modal-title" id="LabelName">{{namePupil}}</h4>
+                                    <h4 class="modal-title pupil-name">{{namePupil}}</h4>
                                     <span style="display:none" id="balancePay">{{balance}}</span>
                                 </div>
                                 <div class="modal-body">
@@ -175,12 +186,12 @@ if (!isset($_SESSION['uid'])) {
                                                   <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                                                     <div class="form-group">
 
-                                                        <label for="slice">Type de frais</label>
-                                                        <select class="form-control" ng-change="newPayPrerequis()" ng-model="sliceCode" id="slice" name="slice" required>
+                                                        <label for="term">Type de frais</label>
+                                                        <select class="form-control" ng-change="newPayPrerequis()" ng-model="termCode" id="term" name="term" required>
                                                             <option></option>
-                                                            <option value="1TRF">1ERE TRANCHE</option>
-                                                            <option value="2TRF">2EME TRANCHE</option>
-                                                            <option value="3TRF">3EME TRANCHE</option>
+                                                            <option value="1TRIM">1er Trimestre</option>
+                                                            <option value="2TRIM">2eme Trimestre</option>
+                                                            <option value="3TRIM">3eme Trimestre</option>
                                                         </select>
                                                     </div>
                                                   </div>
@@ -204,7 +215,7 @@ if (!isset($_SESSION['uid'])) {
                                             <!-- /.panel-body -->
                                             <div class="panel-footer">
                                                 <button type="reset" class="btn btn-default" >Annuler</button>
-                                                <button type="button" ng-click="submitPayment()" class="btn btn-primary pull-right">Enregistrer</button>
+                                                <button type="submit" ng-click="submitPayment()" class="btn btn-primary pull-right">Enregistrer</button>
                                             </div>
                                         </form>
                                     </div>
@@ -217,8 +228,8 @@ if (!isset($_SESSION['uid'])) {
                                                     <tr>
 
                                                         <th>Code paie</th>
-                                                        <th>Tranche</th>
-                                                        <th>Type de Frais</th>
+                                                        <th>Trimestre</th>
+                                                        <th>Type de frais</th>
                                                         <th>Montant</th>
                                                         <th>Date de paiement</th>
                                                     </tr>
@@ -242,38 +253,67 @@ if (!isset($_SESSION['uid'])) {
                         </div>
                         <!-- /.modal-dialog -->
                     </div>
-                    <!-- /.row -->
+                    <!-- /.modal -->
+                    <div class="modal fade" id="updatePaymentsModal" tabindex="-1" role="dialog" aria-labelledby="updatePaymentsModal" aria-hidden="true" data-backdrop="static">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                  <h4 class="modal-title">Modification du paiement <span class="code-pay" style="font-style:italic"></span><span class="pull-right"></span></h4>
+                              </div>
+                              <!-- /.modal-header -->
+
+                              <form id="update_payment_form" method="post">
+                                <div class="modal-body">
+                                    <div class="form-group row">
+                                        <label for="" class="col-sm-2 col-form-label required">Montant</label>
+                                        <div class="col-sm-10">
+                                          <input type="number" class="form-control" name="new_amount" id="new_amount" min="1" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-sm-2 col-form-label required">Raison</label>
+                                        <div class="col-sm-10">
+                                          <input type="text" list="reasons_list" class="form-control" name="update_reason" id="update_reason" required>
+                                          <datalist id="reasons_list">
+                                            <option value="Erreur de saisie">Erreur de saisie</option>
+                                            <option value="Billet avec déchirure">Billet avec déchirure</option>
+                                          </datalist>
+                                        </div>
+                                    </div>
+                                    <p style="color:red;font-style:italic" id="error_msg2"></p>
+                                    <input type="hidden" id="codeterm" name="codeterm">
+                                    <input type="hidden" id="former_amount" name="former_amount">
+                                    <input type="hidden" id="code_pay" name="code_pay">
+                                    <input type="hidden" id="pupil_matr" name="pupil_matr" >
+                                    <input type="hidden" id="pupil_name" name="pupil_name" >
+                                    <input type="hidden" id="level2" name="level2" >
+                                    <input type="hidden" id="section2" name="section2" >
+                                    <input type="hidden" id="anasco2" name="anasco2" >
+                                </div>
+                                <!-- /.modal-body -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Fermer</button>
+                                    <button type="reset" class="btn btn-default" >Annuler</button>
+                                    <button type="submit" ng-click="updatePayment()" class="btn btn-primary">Appliquer</button>
+                                </div>
+                                <!-- /.modal-footer -->
+                              </form>
+
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                  </div>
+                  <!-- /.row -->
                 </div>
                 <!-- /#page-wrapper -->
 
             </div>
             <!-- /#wrapper -->
 
-            <!-- UI dialog -->
-            <div style="display:none">
-              <div id="alert-message" title="Alerte" class="ui-state-error">
-                <p>
-                  <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 50px 0;"></span>
-                  <span id="alert-text"></span>
-                </p>
-              </div>
-              <div id="info-message" title="Information" class="ui-state-highlight">
-                <p>
-                  <span class="ui-icon ui-icon-info" style="float:left; margin:0 7px 50px 0;"></span>
-                  <span id="info-text"></span>
-                </p>
-              </div>
-              <div id="dialog-confirm" title="Confirmation de l'opération">
-                <p>
-                  <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
-                  <span id="confirm-text"></span>
-                  <div id="confirm-body">
-
-                  </div>
-                </p>
-              </div>
-            </div>
-            <!-- /UI dialog -->
 
             <!-- jQuery -->
             <script src="vendor/jquery/jquery.min.js"></script>
@@ -289,8 +329,8 @@ if (!isset($_SESSION['uid'])) {
             <script src="vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
             <script src="vendor/datatables-responsive/dataTables.responsive.js"></script>
 
-            <!-- JQuery UI JavaScrip -->
-            <script src="vendor/jquery-ui/jquery-ui.min.js"></script>
+            <!-- also works in the <head> -->
+            <script src="vendor/alertify/lib/alertify.min.js"></script>
 
             <!-- Custom Theme JavaScript -->
             <script src="dist/js/sb-admin-2.js"></script>

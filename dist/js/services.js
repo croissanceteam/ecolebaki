@@ -2,10 +2,11 @@ var app=angular.module('app');
 
 app.factory("factoryStudent",function($http,$q){
     var MyFactory={
-         
+
         getListPayment:function(year,level,option,frais,departement){
-                
+
                 let url="controllers/TaskPayment.php?departement="+departement+"&year="+year+"&frais="+frais+"&level="+level+"&option="+option;
+                console.log('Request URL :',url);
                 let promise_5=$q.defer();
                 $http.get(url)
                      .success(function(data,status){
@@ -19,4 +20,3 @@ app.factory("factoryStudent",function($http,$q){
     }
     return MyFactory;
 });
-

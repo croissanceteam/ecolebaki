@@ -48,9 +48,10 @@ class Logger {
           return "Vous avez mal retapé le nouveau mot de passe. Veuillez réessayer.";
         }
       } catch (\PDOException $ex) {
-            return $ex->getMessage();
+            // return $ex->getMessage();
+            return "Erreur";
       } catch (\Exception $e) {
-
+            return "Erreur";
       }
 
 
@@ -60,35 +61,45 @@ class Logger {
     public function getLogger($userid, $pwd) {
         $db = getDB();
 
-        $req = "SELECT _MATR,_USERNAME,_PWD AS password,_PRIORITY,_CODE_DIRECTION,_ANASCO,_NAME FROM t_login login
+        $req = "SELECT _MATR,_USERNAME,_PWD AS password,_PRIORITY,_CODE_DIRECTION,_ANASCO,_NAME,_LOCKED AS locked FROM t_login login
                 JOIN t_agent agent ON login._MATR_AGENT=agent._MATR
                 WHERE login._USERNAME=?";
 
         $Login = queryDB($req,[$userid])->fetch();
 
-        if ($Login && password_verify($pwd, $Login->password)) {
+        switch ($Login->locked) {
+          case 0:
+            if ($Login && password_verify($pwd, $Login->password)) {
 
-            $QuerySlice = "SELECT * FROM t_slice_payment WHERE _ANASCO = ?";
-            $SQL_PREPARE = $db->prepare($QuerySlice);
-            $SQL_PREPARE->execute([$Login->_ANASCO]);
-            $SlicePayment = $SQL_PREPARE->fetchAll();
+                $QueryTerm = "SELECT * FROM t_terms WHERE _ANASCO = ?";
+                $SQL_PREPARE = $db->prepare($QueryTerm);
+                $SQL_PREPARE->execute([$Login->_ANASCO]);
+                $TermPayment = $SQL_PREPARE->fetchAll();
 
-            $users = $this->getCounterStats($Login->_CODE_DIRECTION);
-            $pupils = $this->getPupils($Login->_CODE_DIRECTION, $Login->_PRIORITY, $Login->_ANASCO);
-            $agents = $this->getAgents($Login->_CODE_DIRECTION, $Login->_PRIORITY);
-            $logged = array
-                (
-                'login' => $Login,
-                'slices' => $SlicePayment,
-                'users' => $users,
-                'pupils' => $pupils,
-                'agents' => $agents,
-                'years' => $this->getYears()
-            );
-        } else {
-            return array();
+                $users = $this->getCounterStats($Login->_CODE_DIRECTION);
+                $pupils = $this->getPupils($Login->_CODE_DIRECTION, $Login->_PRIORITY, $Login->_ANASCO);
+                $agents = $this->getAgents($Login->_CODE_DIRECTION, $Login->_PRIORITY);
+                $logged = array
+                    (
+                    'login' => $Login,
+                    'terms' => $TermPayment,
+                    'users' => $users,
+                    'pupils' => $pupils,
+                    'agents' => $agents,
+                    'years' => $this->getYears()
+                );
+            } else {
+                return false;
+            }
+            return $logged;
+
+            break;
+
+          default:
+            return 'locked';
+            break;
         }
-        return $logged;
+
     }
 
     public function getCounterStats($direction) {
@@ -107,8 +118,8 @@ class Logger {
 
         $Query = "SELECT DISTINCT(students._MAT),students._NAME,students._SEX,students._PICTURE
                   FROM t_students students
-                  JOIN t_payment pay ON students._MAT=pay._MATR
-                  WHERE pay._DEPARTMENT = :direction AND pay._ANASCO = :anasco";
+                  INNER JOIN t_subscription subscrit ON students._MAT=subscrit._MATR_PUPIL
+                  WHERE subscrit._DEPARTMENT = :direction AND subscrit._ANASCO = :anasco AND students._STATUS = 1";
         // " GROUP BY students._MAT";
         $sql = $db->prepare($Query);
         $sql->execute([

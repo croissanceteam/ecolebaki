@@ -28,7 +28,9 @@ if (!isset($_SESSION['uid'])) {
 
         <!-- DataTables Responsive CSS -->
         <link href="vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
-
+        <!-- Alertify -->
+        <link rel="stylesheet" href="vendor/alertify/themes/alertify.core.css" />
+        <link rel="stylesheet" href="vendor/alertify/themes/alertify.default.css" />
         <!-- Custom CSS -->
         <link href="dist/css/sb-admin-2.css" rel="stylesheet">
 
@@ -50,7 +52,7 @@ if (!isset($_SESSION['uid'])) {
 
     </head>
 
-    <body ng-app='app' ng-controller="ViewPupilsCtrl">
+    <body ng-app='app' ng-controller="ReinscriptionCtrl">
 
 
 
@@ -59,8 +61,7 @@ if (!isset($_SESSION['uid'])) {
         ?>
         <div id="page-wrapper">
             <div class="row">
-            <div style="display: none;" class="alert alert-success" role="alert" id="success_alert">Message</div>
-            <div style="display: none;" class="alert alert-danger" role="alert" id="danger_alert"></div>
+
                 <div class="col-lg-12">
                     <label class="page-header" style="width: 100%;font-size: 16px;">
                         <i class="fa fa-users"></i> Réinscriptions
@@ -206,7 +207,7 @@ if (!isset($_SESSION['uid'])) {
 
                                                             <div class="form-group">
                                                                 <label class="control-label"  for="amount">Montant à payer</label>
-                                                                <input type="number" class="form-control" id="amount" name="amount" min="5" max="<?= $_SESSION['slices'][2]->_AMOUNT ?>" required>
+                                                                <input type="number" class="form-control" id="amount" name="amount" min="5" max="<?= $_SESSION['terms'][0]->_AMOUNT ?>" required>
                                                             </div>
                                                     </div>
                                                     <!-- /.col-lg-6 (nested) -->
@@ -250,6 +251,8 @@ if (!isset($_SESSION['uid'])) {
         <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
         <script src="vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
         <script src="vendor/datatables-responsive/dataTables.responsive.js"></script>
+        <!-- Alertify -->
+        <script src="vendor/alertify/lib/alertify.min.js"></script>
 
         <!-- Custom Theme JavaScript -->
         <script src="dist/js/sb-admin-2.js"></script>

@@ -1,4 +1,4 @@
-app.controller('ViewPupilsCtrl', function ($scope, $http) {
+app.controller('ReinscriptionCtrl', function ($scope, $http) {
     // alert(document.querySelector('#lbl_year').innerHTML);
     $http.get('listyears').then(function (response) {
 
@@ -7,9 +7,6 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
 
         $(document).ready(function () {
             console.log('222');
-
-
-
             var table = $('#pupilstoreenrol-table').DataTable({
                 ajax: {
                     url: 'pupilstoreenrol',
@@ -48,10 +45,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                     }
                 }
             });
-
-
-
-
+            
             $('#pupilstoreenrol-table tbody').on('click', 'tr', function (e) {
                 var data = table.data();
                 var index = e.target._DT_CellIndex.row;
@@ -143,8 +137,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                     document.querySelector('#btn_date_after').click();
 
                     if (result == 1) {
-                        $('#success_alert').html("La réinscription a reussi!");
-                        document.querySelector('#success_alert').style = "display:normal";
+                        alertify.success("La réinscription a reussi!");
                         document.querySelector("#invoice").click();
                         //window.location.href = "invoice";
                         //window.open("http://localhost/~jonathan/ecolebaki2/invoice");
@@ -152,21 +145,13 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                             window.location.reload();
                         }, 2000);
                     } else {
-                        $('#danger_alert').html("La réinscription a échoué!");
-                        document.querySelector('#danger_alert').style = "display:normal";
-                        setTimeout(function () {
-                            document.getElementById('danger_alert').style = "display:none";
-                        }, 2000);
+                        alertify.error("La réinscription a échoué!");
                     }
 
                 },
                 error: function (error) {
                     console.log('Error result : ',error);
-                    $('#danger_alert').html("L'opération n'a pas abouti!");
-                    document.querySelector('#danger_alert').style = "display:normal";
-                    setTimeout(function () {
-                        document.getElementById('danger_alert').style = "display:none";
-                    }, 2000);
+                    alertify.error("L'opération n'a pas abouti!");
                 }
 
             });

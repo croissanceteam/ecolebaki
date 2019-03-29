@@ -8,10 +8,15 @@ function getLogger(){
                  if (isset($_POST['user']) && isset($_POST['pwd'])) {
                  $log=new logger();
                  $response=$log->getLogger($_POST['user'],$_POST['pwd']);
-                 if (count($response)>0) {
+
+
+                 if($response == 'locked')
+                 {
+                   return 6;
+                 }else if ($response) {
 
                      $login=$response['login'];
-                     $slices=$response['slices'];
+                     $terms=$response['terms'];
                      $users=$response['users'];
                      $pupils=$response['pupils'];
                      $agents=$response['agents'];
@@ -22,7 +27,7 @@ function getLogger(){
                      $_SESSION['priority']=$login->_PRIORITY;
                      $_SESSION['anasco']=$login->_ANASCO;
                     //  $_SESSION['slices']=$slices[0];
-                     $_SESSION['slices']=$slices;
+                     $_SESSION['terms']=$terms;
                      $_SESSION['counter_users']=sizeof($users);
                      $_SESSION['list_users']=$users;
                      $_SESSION['pupils']=$pupils;

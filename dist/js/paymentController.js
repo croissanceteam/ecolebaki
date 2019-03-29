@@ -1,4 +1,4 @@
-app.controller('ViewPupilsCtrl', function ($scope, $http) {
+app.controller('PaymentsCtrl', function ($scope, $http) {
     // alert(document.querySelector('#lbl_year').innerHTML);
     $http.get('listyears').then(function (response) {
         $scope.list_years = response.data.splice(1);
@@ -14,7 +14,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
 
                 responsive: 'true',
                 columns: [
-
+                    {"data": "id"},
                     {"data": "matricule"},
                     {"data": "name_pupil"},
                     {"data": "gender"},
@@ -51,14 +51,20 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                 var index = e.target._DT_CellIndex.row;
 
                 $('#error_msg').html("");
-                document.querySelector('#toggle-pupil-payments').click();
-                document.querySelector('#LabelName').innerHTML = data[index].name_pupil;
+                document.querySelector('#toggle-payments-modal').click();
+                $('.pupil-name').text(data[index].name_pupil);
                 document.querySelector('#mat_pupil').value = data[index].matricule;
                 document.querySelector('#name_pupil').value = data[index].name_pupil;
                 document.querySelector('#level').value = data[index].level;
                 document.querySelector('#section').value = data[index].section;
                 document.querySelector('#anasco').value = (document.querySelector('#lbl_year').innerHTML).trim();
                 document.querySelector('#add_payment_form').reset();
+                //-----update form data----
+                $('#pupil_matr').val(data[index].matricule);
+                $('#pupil_name').val(data[index].name_pupil);
+                $('#level2').val(data[index].level);
+                $('#section2').val(data[index].section);
+                $('#anasco2').val(($('#lbl_year').html()).trim());
 
 
 
@@ -72,7 +78,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                     responsive: true,
                     aoColumns: [
                         {"mDataProp": "id_pay"},
-                        {"mDataProp": "slice_pay"},
+                        {"mDataProp": "term"},
                         {"mDataProp": "fee_object"},
                         {"mDataProp": "amount_payed"},
                         {"mDataProp": "date_pay"}
@@ -101,6 +107,32 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                     }
                 });
                 // alert( 'You clicked on '+data[index].id+'\'s row' );
+                $('#dataTables-paiement').on('click','tr',function(e){
+                  var dataPay = tablePay.data();
+                  var i = e.target._DT_CellIndex.row;
+                  console.log('You clicked on ' ,dataPay[i]);
+                  $('.code-pay').text(dataPay[i].id_pay);
+                  // $('#codeterm').val(dataPay[i].slice_pay);
+                  var term = dataPay[i].term;
+                  switch (term) {
+                    case '1er Trimestre':
+                      $('#codeterm').val('1TRIM');
+                      break;
+                    case '2eme Trimestre':
+                      $('#codeterm').val('2TRIM');
+                      break;
+                    case '3eme Trimestre':
+                      $('#codeterm').val('3TRIM');
+                      break;
+                    default:
+                      break;
+                  }
+                  $scope.payPrerequis($('#codeterm').val());
+                  $('#former_amount').val(dataPay[i].amount_payed);
+                  $('#new_amount').val(dataPay[i].amount_payed);
+                  $('#code_pay').val(dataPay[i].id_pay);
+                  $('#updatePaymentsModal').modal('show');
+                });
             });
         });//end of document ready
 
@@ -144,7 +176,6 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
         });
     }
 
-
     $scope.toFillTable = function (index, url) {
         $http.get(url).then(function (response) {
             console.log(url,response.data);
@@ -161,7 +192,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
 
             responsive: 'true',
             columns: [
-
+                {"data": "id"},
                 {"data": "matricule"},
                 {"data": "name_pupil"},
                 {"data": "gender"},
@@ -199,8 +230,8 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
             console.log('Data: ',data[index]);
             console.log("Last list pay: ",data[index].payinfo);
 
-            document.querySelector('#toggle-pupil-payments').click();
-            document.querySelector('#LabelName').innerHTML = data[index].name_pupil;
+            document.querySelector('#toggle-payments-modal').click();
+            // document.querySelector('#LabelName').innerHTML = data[index].name_pupil;
             document.querySelector('#mat_pupil').value = data[index].matricule;
             document.querySelector('#name_pupil').value = data[index].name_pupil;
             document.querySelector('#level').value = data[index].level;
@@ -213,7 +244,7 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
                 responsive: true,
                 aoColumns: [
                     {"mDataProp": "id_pay"},
-                    {"mDataProp": "slice_pay"},
+                    {"mDataProp": "term"},
                     {"mDataProp": "fee_object"},
                     {"mDataProp": "amount_payed"},
                     {"mDataProp": "date_pay"}
@@ -259,19 +290,25 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
 
     $scope.newPayPrerequis = function()
     {
+      console.log($scope.termCode);
+      $scope.payPrerequis($scope.termCode);
+    }
+
+    $scope.payPrerequis = function(term)
+    {
       var matr = $('#mat_pupil').val();
       var year = $('#anasco').val();
       $('#error_msg').html("");
-      console.log($scope.sliceCode);
-      var url = 'paymentprerequis/'+ matr + '/'+ $scope.sliceCode + '/' + year;
+
+      var url = 'paymentprerequis/'+ matr + '/'+ term + '/' + year;
       $http.get(url).then(function (response) {
           // console.log('Balance : ',response.data);
           $scope.balance = response.data;
           console.log('Balance : ',$scope.balance);
           $('#amount').val(response.data);
       }, function (error) {
-          console.log(error)
-      })
+          console.log(error);
+      });
     }
 
 
@@ -280,140 +317,167 @@ app.controller('ViewPupilsCtrl', function ($scope, $http) {
     {
 
         // var matricule = $('#mat_pupil').val();
-        var slice = $('#slice').val();
+        var term = $('#term').val();
         var amount = $('#amount').val();
         var mydata = $('#add_payment_form').serialize();
-        if (slice == "" && amount == "") {
-            $('#error_msg').html("Veuillez renseigner le type de frais et le montant");
-        } else if (slice == "") {
-            $('#error_msg').html("Veuillez renseigner le type de frais");
-        } else if (amount == "") {
-            $('#error_msg').html("Veuillez renseigner le montant");
-        } else if (amount == 0) {
-            $('#error_msg').html("Le montant saisi est incorrect");
-        } else if ($('#mat_pupil').val() == '') {
+
+        if(term == "" || amount == "" || amount == 0){
+          //might left empty
+        }else if ($('#mat_pupil').val() == '') {
             $('#error_msg').html("Le paiement ne peut pas s'effectuer");
         } else {
             var balance = parseInt($scope.balance,10);
-            // console.log(balance);
+            // console.log('Balance ',balance);
             // var diff = amount > balance;
             // console.log('Vrai ou faux ?',diff);
             if(amount > balance){
               if(balance == 0){
                 $('#error_msg').html("L'élève a déjà soldé ce trimestre");
+                // alertify.alert("L'élève a déjà soldé ce trimestre");
               }else{
-                $('#error_msg').html("Le montant payé ne peut être supérieur au montant à payer pour cette tranche, qui est de " + $('#currency').text() + ' ' + $scope.balance);
+                $('#error_msg').html("Le montant payé ne peut pas être supérieur au reste à payer pour ce trimestre, qui est de " + $('#currency').text() + ' ' + $scope.balance);
               }
             }else{
               $('#error_msg').html("");
               $('#add_payment_form')[0].reset();
               // $('#pupilPaymentsModal').modal('hide');
-              document.querySelector('#toggle-pupil-payments').click();
-              document.getElementById("confirm-text").textContent = "Validez-vous ce paiement ?";
-              document.getElementById("confirm-body").innerHTML =
-              "<br><h4>Elève : " + $('#name_pupil').val() + "</h4><h4>Matricule : " + $('#mat_pupil').val() +
-              "</h4><h4>Tranche : " + slice + "</h4><h4>Montant : " +
-              amount + " " + $('#currency').text() + "</h4>";
-              $( "#dialog-confirm" ).dialog({
-                  resizable: false,
-                  height: "auto",
-                  width: 400,
-                  modal: true,
-                  buttons: {
-                      "Oui": function() {
-                          $(this).dialog( "close" );
+              document.querySelector('#toggle-payments-modal').click();
+              var message = "<h3>Validez-vous ce paiement ?</h3><br><div style='text-align:left;font-size:16px'>Elève : "+ $('#name_pupil').val() +"<br>Matricule : "+ $('#mat_pupil').val() +
+              "<br>Trimestre : "+ term +"<br>Montant : "+ amount +" "+ $('#currency').text() +"</div>";
+              alertify.set({ labels: {
+                  ok     : "Oui",
+                  cancel : "Non"
+              } });
+              alertify.confirm(message, function (e) {
+                  if (e) {
+                      // user clicked "ok"
+                      $.ajax({
+                         type: 'POST',
+                         url: 'addpayment',
+                         data: mydata,
+                         success: function (result) {
+                             console.log("result ",result);
 
-                          $.ajax({
-                              type: 'POST',
-                              url: 'addpayment',
-                              data: mydata,
-                              success: function (result) {
-                                  console.log("result");
-                                  console.log(result);
+                             if (result == 1) {
+                               alertify.set({ delay: 1000 });
+                               alertify.success('Paiement effectué');
+                               window.location.href = "invoice";
+                                 //window.open("http://localhost/~jonathan/ecolebaki2/invoice");
+                                 setTimeout(function () {
+                                     window.location.reload();
+                                 }, 2000);
+                             } else {
+                                 alertify.error("L'opération a échoué");
+                             }
 
-                                  if (result == 1) {
-                                      $('#success_alert').html("Paiement effectué!");
-                                      document.querySelector('#success_alert').style = "display:normal";
-                                      document.querySelector("#invoice").click();
-                                      //window.location.href = "invoice";
-                                      //window.open("http://localhost/~jonathan/ecolebaki2/invoice");
-                                      setTimeout(function () {
-                                          window.location.reload();
-                                      }, 2000);
-                                  } else {
-                                      $('#danger_alert').html("L'opération a échoué!");
-                                      document.querySelector('#danger_alert').style = "display:normal";
-                                      setTimeout(function () {
-                                          document.getElementById('danger_alert').style = "display:none";
-                                      }, 2000);
-                                  }
+                         },
+                         error: function () {
+                             alertify.error("L'opération n'a pas abouti!");
+                         }
 
-                              },
-                              error: function () {
-                                  $('#danger_alert').html("L'opération n'a pas abouti!");
-                                  document.querySelector('#danger_alert').style = "display:normal";
-                                  setTimeout(function () {
-                                      document.getElementById('danger_alert').style = "display:none";
-                                  }, 2000);
-                              }
-
-                          });
-                      },
-                      "Non": function() {
-                          $(this).dialog( "close" );
-                          console.log('Non');
-                      }
+                     });
+                  } else {
+                      // user clicked "cancel"
                   }
               });
-
-              // $.ajax({
-              //     type: 'POST',
-              //     url: 'addpayment',
-              //     data: mydata,
-              //     success: function (result) {
-              //         console.log("result");
-              //         console.log(result);
-              //         document.querySelector('#toggle-pupil-payments').click();
-              //
-              //         if (result == 1) {
-              //             $('#success_alert').html("Paiement effectué!");
-              //             document.querySelector('#success_alert').style = "display:normal";
-              //             document.querySelector("#invoice").click();
-              //             //window.location.href = "invoice";
-              //             //window.open("http://localhost/~jonathan/ecolebaki2/invoice");
-              //             setTimeout(function () {
-              //                 window.location.reload();
-              //             }, 2000);
-              //         } else {
-              //             $('#danger_alert').html("L'opération a échoué!");
-              //             document.querySelector('#danger_alert').style = "display:normal";
-              //             setTimeout(function () {
-              //                 document.getElementById('danger_alert').style = "display:none";
-              //             }, 2000);
-              //         }
-              //
-              //     },
-              //     error: function () {
-              //         $('#danger_alert').html("L'opération n'a pas abouti!");
-              //         document.querySelector('#danger_alert').style = "display:normal";
-              //         setTimeout(function () {
-              //             document.getElementById('danger_alert').style = "display:none";
-              //         }, 2000);
-              //     }
-              //
-              // });
             }
         }
         return false;
     }
 
+    $scope.updatePayment = function()
+    {
+      console.log('Code term field ',$('#codeterm').val());
+      // $scope.payPrerequis($('#codeterm').val());
+      console.log('Balance at update',$scope.balance);
+      var amount = $('#new_amount').val();
+      var reason = $.trim($('#update_reason').val());
+      var mydata = $('#update_payment_form').serialize();
+      // var mydata = {'amount':amount,'reason':reason,'idpay':$('.code-pay').text()};
+      console.log('Update form data : ',mydata);
+      if(amount == "" || amount == 0 || reason == ""){
+        //might left empty
+      }else{
+        var balance = parseInt($scope.balance,10);
+        var formeramount = parseInt($('#former_amount').val(),10);
+        var balance_recompute = balance + formeramount;
+        console.log('Balance recompute ', balance_recompute);
+        if(amount > balance_recompute){
+          if(balance_recompute == 0){
+            $('#error_msg2').html("L'élève a déjà soldé ce trimestre");
+            // alertify.alert("L'élève a déjà soldé ce trimestre");
+          }else{
+            $('#error_msg2').html("Le montant payé ne peut pas être supérieur au reste à payer pour ce trimstre, qui est de " + $('#currency').text() + ' ' + balance_recompute);
+            // alert("Le montant payé ne peut être supérieur au montant à payer pour cette tranche, qui est de " + $('#currency').text() + ' ' + balance_recompute);
+          }
+        }else if(amount == formeramount){
+          $('#error_msg2').html("Aucune modification n'a été apporté!");
+        }else{
+          $('#error_msg2').html("");
+          // $('#update_payment_form')[0].reset();
+          $('#updatePaymentsModal').modal('hide');
 
+          var message =
+          "<h3>Validez-vous ce changement ?</h3><br><div style='text-align:left'><h4>Elève : " + $('#name_pupil').val() + "</h4><h4>Matricule : " + $('#mat_pupil').val() +
+          "</h4><h4>Trimestre : "+ $('#codeterm').val() + "</h4>"+
+          "<br><h4>Montant précedent : "+ $('#former_amount').val() +" "+ $('#currency').text() +"</h4>"+
+          "<h4>Nouveau montant : "+ amount +" "+ $('#currency').text() +"</h4></div>";
+          alertify.set({ labels: {
+              ok     : "Oui",
+              cancel : "Non"
+          } });
+          alertify.confirm(message, function (e) {
+              if (e) {
+                  // user clicked "ok"
+                  $.ajax({
+                      type: 'POST',
+                      url: 'updatepayment',
+                      data: mydata,
+                      success: function (result) {
+                          console.log("result update :",result);
+
+                          if (result == 1) {
+                              alertify.set({ delay: 1000 });
+                              alertify.success('Le paiement a été modifié');
+                              window.location.href = "invoice";
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 2000);
+                          } else {
+                              alertify.error("L'opération a échoué!");
+                          }
+                      },
+                      error: function () {
+                          alertify.error("L'opération n'a pas abouti!");
+                      }
+
+                  });
+              } else {
+                  // user clicked "cancel"
+              }
+              document.querySelector('#toggle-payments-modal').click();
+          });
+
+        }
+      }
+      return false;
+    }
+
+    $scope.alert = function(type,message)
+    {
+      /*
+          primary, secondary, success, danger, warning, info, light, dark
+      */
+      $('.alert-'+ type +' span').html(message);
+      $('.alert-'+ type ).fadeIn(500);
+      setTimeout(function () { $('.alert-'+ type).fadeOut(1000); }, 2500);
+    }
 
     // function fillSlicesList() {
     //     $('#slice').empty();
     //     $.ajax({
     //         url: 'loadslices',
-    //         data: 'getslices',
+    //         data: 'getterms',
     //         dataType: 'json',
     //         success: function (json) {
     //             $('#slice').append('<option value="">-------</option>');

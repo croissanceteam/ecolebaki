@@ -5,7 +5,7 @@
     /* margin: 7em 0em 20em 0em; */
 }
 /* div h4, div.block-printer {
-     
+
 } */
 div.block-printer {
     font-family: Arial, Helvetica, sans-serif;
@@ -25,8 +25,10 @@ div.inner-block {
     position:absolute;
     z-index: 100;
     width: 270px;
-    text-align: center;
-    font-size:1.4em;
+}
+.alert span{
+  text-align: left;
+  font-size:14px;
 }
 @media only screen and (max-width: 767px) {
     /* for phone */
@@ -34,11 +36,11 @@ div.inner-block {
         top: 50%; left: 50%;
         transform: translate(-50%, -50%);
     }
-    
+
 }
 @media only screen and (min-width: 768px) {
     .alert{
         top: 50%; left: 50%;
     }
-    
+
 }

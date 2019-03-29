@@ -28,7 +28,10 @@ if (!isset($_SESSION['uid'])) {
 
         <!-- DataTables Responsive CSS -->
         <link href="vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
-
+        <!-- Alertify -->
+        <link rel="stylesheet" href="vendor/alertify/themes/alertify.core.css" />
+        <!-- include a theme, can be included into the core instead of 2 separate files -->
+        <link rel="stylesheet" href="vendor/alertify/themes/alertify.default.css" />
         <!-- Custom CSS -->
         <link href="dist/css/sb-admin-2.css" rel="stylesheet">
 
@@ -68,7 +71,6 @@ if (!isset($_SESSION['uid'])) {
             <?php require_once 'partials/menu-bar.php'; ?>
             <div id="page-wrapper">
                 <div class="row">
-                <div style="display: none;" class="alert alert-info" role="alert" id="info_alert">Message</div>
                     <div class="loader" id="loader">
                         <img src="dist/images/loader/spinner.gif">
                     </div>
@@ -115,6 +117,7 @@ if (!isset($_SESSION['uid'])) {
                                         <label for="year">ANNEES SCOLAIRES</label>
 
                                         <select id="year" ng-model="cbo_year" ng-options="item.year for item in years" ng-change="criteriaChanged()" class="chzn-select" style="width:100%">
+                                        <!-- <select id="year" ng-model="cbo_year" ng-change="criteriaChanged()" class="chzn-select" style="width:100%"> -->
 
                                         </select>
                                     </div>
@@ -146,10 +149,10 @@ if (!isset($_SESSION['uid'])) {
                                             <option value="RESUB">RE-INSCRIPTION</option> -->
 
                                             <optgroup label="--FRAIS SCOLAIRES--"></optgroup>
-                                            <option value="all">TOUTES</option>
-                                            <option value="1TRF">1ere TRANCHE</option>
-                                            <option value="2TRF">2eme TRANCHE</option>
-                                            <option value="3TRF">3eme TRANCHE</option>
+                                            <option value="all">TOUS</option>
+                                            <option value="1TRIM">1er Trimestre</option>
+                                            <option value="2TRIM">2eme Trimestre</option>
+                                            <option value="3TRIM">3eme Trimestre</option>
 
                                         </select>
                                     </div>
@@ -180,7 +183,7 @@ if (!isset($_SESSION['uid'])) {
                                             Année scolaire
                                         </td>
                                         <td>
-                                            : {{cbo_year}}
+                                            : {{cbo_year.year}}
                                         </td>
                                     </tr>
 
@@ -266,21 +269,21 @@ if (!isset($_SESSION['uid'])) {
                 </div>
                 <!-- /block paie -->
                 <?php
-                $SlicePayment = $_SESSION['slices'];
-// echo var_dump($SlicePayment);
+                $TermPayment = $_SESSION['terms'];
+// echo var_dump($TermPayment);
                 $totalFRSCO = 0;
 
-                foreach ($SlicePayment as $key => $value) {
+                foreach ($TermPayment as $key => $value) {
                     $totalFRSCO += trim($value->_AMOUNT);
-                    switch ($value->_CODESLICE) {
-                        case '1TRF':
-                            $_SESSION['1TRF'] = trim($value->_AMOUNT);
+                    switch ($value->_CODETERM) {
+                        case '1TRIM':
+                            $_SESSION['1TRIM'] = trim($value->_AMOUNT);
                             break;
-                        case '2TRF':
-                            $_SESSION['2TRF'] = trim($value->_AMOUNT);
+                        case '2TRIM':
+                            $_SESSION['2TRIM'] = trim($value->_AMOUNT);
                             break;
-                        case '3TRF':
-                            $_SESSION['3TRF'] = trim($value->_AMOUNT);
+                        case '3TRIM':
+                            $_SESSION['3TRIM'] = trim($value->_AMOUNT);
                             break;
                         default:
                             $_SESSION["nothing"] = "Zero";
@@ -289,20 +292,20 @@ if (!isset($_SESSION['uid'])) {
                 }
 
                 ?>
-                <label for="" id="lbl1TRF" style="display:none;">
+                <label for="" id="lbl1TRIM" style="display:none;">
 
                     <?php
-                    echo $_SESSION['1TRF'];
+                    echo $_SESSION['1TRIM'];
                     ?>
                 </label>
-                <label for="" id="lbl2TRF" style="display:none;">
+                <label for="" id="lbl2TRIM" style="display:none;">
                     <?php
-                    echo $_SESSION['2TRF'];
+                    echo $_SESSION['2TRIM'];
                     ?>
                 </label>
-                <label for="" id="lbl3TRF" style="display:none;">
+                <label for="" id="lbl3TRIM" style="display:none;">
                     <?php
-                    echo $_SESSION['3TRF'];
+                    echo $_SESSION['3TRIM'];
                     ?>
                 </label>
                 <label for="" id="lblFRSCO" style="display:none;">
@@ -320,7 +323,7 @@ if (!isset($_SESSION['uid'])) {
                                     Année scolaire
                                 </td>
                                 <td>
-                                    : {{cbo_year}}
+                                    : {{cbo_year.year}}
                                 </td>
                             </tr>
 
@@ -445,7 +448,8 @@ if (!isset($_SESSION['uid'])) {
         <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
         <script src="vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
         <script src="vendor/datatables-responsive/dataTables.responsive.js"></script>
-
+        <!-- Alertify -->
+        <script src="vendor/alertify/lib/alertify.min.js"></script>
         <!-- Custom Theme JavaScript -->
         <script src="dist/js/sb-admin-2.js"></script>
         <script src="dist/js/angular.min.js"></script>

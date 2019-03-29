@@ -15,6 +15,7 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
     $http.get('listyears').then(function (response) {
         console.log('listyears : ',response.data);
         $scope.years = response.data;
+        $scope.cbo_year = $scope.years;
         //for initialising the list by the first value : $scope.cbo_year = $scope.years[0];
     }, function (error) {
         console.log(error)
@@ -26,14 +27,14 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
       document.querySelector('#preview').style.display = "none";
 
       switch (document.querySelector('#frais').value) {
-          case "1TRF":
-              $('.txt_feesType').html("1ère Tranche");
+          case "1TRIM":
+              $('.txt_feesType').html("1er Trimestre");
               break;
-          case "2TRF":
-              $('.txt_feesType').html("2ème Tranche");
+          case "2TRIM":
+              $('.txt_feesType').html("2eme Trimestre");
               break;
-          case "3TRF":
-              $('.txt_feesType').html("3ème Tranche");
+          case "3TRIM":
+              $('.txt_feesType').html("3eme Trimestre");
               break;
           case "all":
               $('.txt_feesType').html("Tout");
@@ -51,7 +52,7 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
 
         //document.querySelector('.print').style = "display:none";
 
-
+        console.log('cbo_year :',$scope.cbo_year.year);
         if ($scope.cbo_year != undefined && $scope.cbo_frais != undefined && $scope.cbo_promotion != undefined) {
             $scope.isLoading = true;
             $scope.isVisibeCtrl = true;
@@ -61,7 +62,7 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
 
             $scope.tabGroupPupils = [];
             var promotion = $scope.cbo_promotion.toString().trim().split(" ");
-            console.log(promotion.length);
+            console.log('Promotion length : ',promotion.length);
             var level = promotion[0].substring(0, 1);
             var option = promotion[1];
             console.log("Level is :" + level + " option is:" + option);
@@ -70,7 +71,7 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
             $scope.pupilGroup = [];
             var departement = document.querySelector('#lbldepartement').innerHTML;
             //var url = "../controllers/TaskPayment.php?departement=" + departement + "&year=" + $scope.cbo_year + "&frais=" + $scope.cbo_frais + "&level=" + level + "&option=" + option;
-            factoryStudent.getListPayment($scope.cbo_year,level,option,$scope.cbo_frais,departement).then(
+            factoryStudent.getListPayment($scope.cbo_year.year,level,option,$scope.cbo_frais,departement).then(
                 function(response){
                     console.log('Response:',response);
                     $scope.totalPupils=parseInt(response.counter[0].COUNTER);
@@ -82,42 +83,39 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
                             $scope.isVisibeCtrl = false;
                             document.querySelector('#blockPrinter').style = "display:none";
                             document.querySelector('#loader').style = "display:none";
-
-                            document.querySelector('#info_alert').textContent = "Cette promotion n'a pas d'élèves!";
-                            $( "#info_alert" ).fadeIn( 500 );
-                            setTimeout(function () { $( "#info_alert" ).fadeOut( 1000 ); }, 2500);
+                            alertify.alert("Cette promotion n'a pas d'élèves!");
                        }
                    }
 
                     $scope.tablePay=response.pupils;
-                    $scope.totalSlice=0;
-                    //console.log("Total slice: ",$scope.totalSlice);
+                    $scope.totalTrim=0;
+                    //console.log("Total slice: ",$scope.totalTrim);
                     switch ($scope.cbo_frais.trim()) {
-                        case "1TRF":
-                            $scope.totalSlice=parseInt(document.querySelector('#lbl1TRF').innerHTML);
+                        case "1TRIM":
+                            $scope.totalTrim=parseInt(document.querySelector('#lbl1TRIM').innerHTML);
                             break;
-                        case "2TRF":
-                            $scope.totalSlice=parseInt(document.querySelector('#lbl2TRF').innerHTML);
+                        case "2TRIM":
+                            $scope.totalTrim=parseInt(document.querySelector('#lbl2TRIM').innerHTML);
                             break;
-                        case "3TRF":
-                            $scope.totalSlice=parseInt(document.querySelector('#lbl3TRF').innerHTML);
+                        case "3TRIM":
+                            $scope.totalTrim=parseInt(document.querySelector('#lbl3TRIM').innerHTML);
                             break;
                         case "all":
-                            $scope.totalSlice=parseInt(document.querySelector('#lblFRSCO').innerHTML);
+                            $scope.totalTrim=parseInt(document.querySelector('#lblFRSCO').innerHTML);
                             break;
                         default:
                             break;
                     }
 
-                    $scope.totalGlobal=parseInt($scope.totalPupils) * parseInt($scope.totalSlice);
+                    $scope.totalGlobal=parseInt($scope.totalPupils) * parseInt($scope.totalTrim);
                     console.log("Total pupils: ",$scope.totalPupils);
-                    console.log("Total slice: ",$scope.totalSlice);
+                    console.log("Total slice: ",$scope.totalTrim);
                     console.log("Total global: ",$scope.totalGlobal);
-                 //   alert($scope.totalSlice);
+                 //   alert($scope.totalTrim);
                    // alert($scope.totalPupils)
                     $scope.totalTabpay=0;
                     angular.forEach($scope.tablePay,function(value,key){
-                        $scope.totalTabpay+=parseInt(value._AMOUNT);
+                        $scope.totalTabpay+=parseFloat(value._AMOUNT);
 
                     });
                     $scope.resteTabpay = parseInt($scope.totalGlobal) - parseInt($scope.totalTabpay);
@@ -136,9 +134,7 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
                             document.querySelector('#preview').style.display = "block";
                         }else{
                             $scope.isVisibilityPay=false;
-                            document.querySelector('#info_alert').textContent = "Aucun élève n'a payé dans cette promotion !";
-                            $( "#info_alert" ).fadeIn( 500 );
-                            setTimeout(function () { $( "#info_alert" ).fadeOut( 1000 ); }, 2800);
+                            alertify.alert("Aucun élève n'a payé dans cette promotion !");
                         }
 
                     }
@@ -156,7 +152,7 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
     $scope.isVisibeCtrl=false;
     $scope.PrinteTabPay=function(){
 
-        $scope.totalGlobal=parseInt($scope.totalPupils) * parseInt($scope.totalSlice);
+        $scope.totalGlobal=parseInt($scope.totalPupils) * parseInt($scope.totalTrim);
 
         $scope.nameCurrent="";
         $scope.amount=0;
@@ -168,7 +164,7 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
             if ($scope.nameCurrent!=value._NAME) {
                 angular.forEach($scope.tablePay,function(data,index){
                     if(data._NAME==value._NAME){
-                        $scope.amount+=parseInt(data._AMOUNT);
+                        $scope.amount+=parseFloat(data._AMOUNT);
                         delete $scope.tbPrint[index];
                     }
                 });

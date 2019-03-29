@@ -55,17 +55,23 @@
             <div class="col-md-4 col-md-offset-4">
                  <?php
              if ($_SERVER['REQUEST_METHOD']=='POST') {
-                $response_logger= getLogger();
-              switch ($response_logger) {
-                  case 0:
-                            echo "<div class=\"alert alert-danger\" style=\"position: relative;top:5em;text-align: center;\"> Nom utilisateur ou mot de passe incorrect</div>";
-                      break;
+               try {
+                 $response_logger= getLogger();
+                 switch ($response_logger) {
+                     case 0:
+                        echo "<div class=\"alert alert-danger\" style=\"position: relative;top:5em;text-align: center;\"> Nom utilisateur ou mot de passe incorrect</div>";
+                        break;
+                     case 6:
+                        echo "<div class=\"alert alert-danger\" style=\"position: relative;top:5em;text-align: center;\"> Ce compte est verrouilé. <br>Veuillez contacter l'administrateur</div>";
+                        break;
+                     default:
+                        break;
+                 }
+               } catch (\Exception $e) {
+                  echo "<div class=\"alert alert-danger\" style=\"position: relative;top:5em;text-align: center;\"> Echec</div>";
+               }
 
-                  default:
 
-
-                      break;
-              }
             }
             ?>
                 <div style="text-align:center;">
