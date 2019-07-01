@@ -29,10 +29,8 @@ if (!isset($_SESSION['uid'])) {
         <!-- DataTables Responsive CSS -->
         <link href="vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
 
-        <!-- include the core styles -->
-        <link rel="stylesheet" href="vendor/alertify/themes/alertify.core.css" />
-        <!-- include a theme, can be included into the core instead of 2 separate files -->
-        <link rel="stylesheet" href="vendor/alertify/themes/alertify.default.css" />
+        <!-- Alertify -->
+        <link rel="stylesheet" href="vendor/alertify/themes/alertify.css" />
         <!-- Custom CSS -->
         <link href="dist/css/sb-admin-2.css" rel="stylesheet">
         <link href="dist/css/custom.css" rel="stylesheet" type="text/css">
@@ -199,7 +197,7 @@ if (!isset($_SESSION['uid'])) {
                                                   <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
                                                     <div class="form-group">
                                                         <label class="control-label"  for="amount">Montant à payer</label>
-                                                        <input type="number" class="form-control" id="amount" name="amount" min="1" required>
+                                                        <input type="number" class="form-control" id="amount" name="amount" min="1" step=".01" required>
                                                     </div>
                                                   </div>
                                                   <!-- /.col-xl-6 col-lg-6 col-md-6 col-sm-6 -->
@@ -268,7 +266,7 @@ if (!isset($_SESSION['uid'])) {
                                     <div class="form-group row">
                                         <label for="" class="col-sm-2 col-form-label required">Montant</label>
                                         <div class="col-sm-10">
-                                          <input type="number" class="form-control" name="new_amount" id="new_amount" min="1" required>
+                                          <input type="number" class="form-control" name="new_amount" id="new_amount" min="1"  step=".01"required>
                                         </div>
                                     </div>
                                     <div class="form-group row">

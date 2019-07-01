@@ -168,7 +168,7 @@ class Logger {
         $query = "SELECT * FROM t_years_school ORDER BY year DESC";
         $query_execute = $db->prepare($query);
         $query_execute->execute();
-        $response = $query_execute->fetchAll(PDO::FETCH_OBJ);
+        $response = $query_execute->fetchAll();
         return $response;
     }
 

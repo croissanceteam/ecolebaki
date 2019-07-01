@@ -60,7 +60,7 @@ ob_start();
         <h3>PREUVE DE PAIEMENT</h3>
     </div>
     <!-- <div style="width: 100%; height:2px; background-color:grey;margin-bottom:25px;"></div> -->
-    <div style="text-align: right;"><span style="font-weight:bold;"></span> Kinshasa, le <?= date('d/m/Y'); ?></div>
+    <div style="text-align: right;"><span style="font-weight:bold;"></span> Kinshasa, le <?= $_SESSION['date'] ?></div>
     <table style="font-size:14px;">
 
         <tr>

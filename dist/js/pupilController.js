@@ -152,7 +152,7 @@ console.error(error)
         // console.log($('#picture').val());
         console.log('Pupil update data :',mydata);
         // document.querySelector('#viewPupil').click();
-        var message = "Vous êtes sur le point d'enregistrer les modifications. Validez-vous cette opération ?";
+        var message = "Vous êtes sur le point d'enregistrer les modifications. Confirmez-vous cette opération ?";
         alertify.set({ labels: {
             ok     : "Oui",
             cancel : "Non"

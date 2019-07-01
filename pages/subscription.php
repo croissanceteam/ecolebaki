@@ -20,8 +20,7 @@ session_start();
         <!-- MetisMenu CSS -->
         <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
         <!-- Alertify -->
-        <link rel="stylesheet" href="vendor/alertify/themes/alertify.core.css" />
-        <link rel="stylesheet" href="vendor/alertify/themes/alertify.default.css" />
+        <link rel="stylesheet" href="vendor/alertify/themes/alertify.css" />
         <!-- Switchery -->
         <link rel="stylesheet" href="vendor/switchery/dist/switchery.min.css" />
         <!-- Custom CSS -->

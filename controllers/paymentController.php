@@ -1,39 +1,16 @@
 <?php
 
-session_start();
-include_once 'db.php';
+include_once 'BaseController.php';
 
-class PaymentController {
-
-    private static $reqGetPupilPaymentsInfos = "SELECT pay._IDPAY AS id_pay, term._LABELTERM AS term, sfees._LABEL AS fee_object, pay._AMOUNT AS amount_payed, pay._DATEPAY AS date_pay
-                    FROM t_payment pay
-                    JOIN t_school_fees sfees ON pay._OBJECT=sfees._CODE
-                    JOIN t_terms term ON term._CODETERM=pay._CODETERM
-                    WHERE pay._MATR=:matr AND pay._ANASCO=:anasco AND term._ANASCO=:anasco";
-    // private static $reqGetActualPupiltermmentsList = "SELECT DISTINCT(pupils._ID) AS id, pupils._MAT AS matricule,UPPER(pupils._NAME) AS name_pupil,pupils._SEX AS gender,subscrit._CODE_CLASS AS level,subscrit._CODE_SECTION AS section
-    //                 FROM t_students pupils
-    //                 JOIN t_payment payments ON pupils._MAT=payments._MATR
-    //                 JOIN t_subscription subscrit ON pupils._MAT=subscrit._MATR_PUPIL
-    //                 WHERE payments._DEPARTMENT=:department AND subscrit._ANASCO=:year";
-    // private static $reqGetPupiltermmentsList = "SELECT DISTINCT(pupils._ID) AS id, pupils._MAT AS matricule,UPPER(pupils._NAME) AS name_pupil,pupils._SEX AS gender,subscrit._CODE_CLASS AS level,subscrit._CODE_SECTION AS section, subscrit._ANASCO
-    //                 FROM t_students pupils
-    //                 JOIN t_payment payments ON pupils._MAT=payments._MATR
-    //                 JOIN t_subscription subscrit ON pupils._MAT=subscrit._MATR_PUPIL
-    //                 WHERE payments._DEPARTMENT=:department AND subscrit._ANASCO=:year";
-
-    private static $reqGetTermInfos = "SELECT term.*, sfees._LABEL AS _OBJECT_PAY
-                    FROM t_terms term
-                    JOIN t_school_fees sfees ON sfees._CODE = term._CODE_FEES
-                    WHERE term._CODETERM =:code AND term._ANASCO=:anasco";
-
-    // private static $getTermSumPaidByPupil = "SELECT SUM(_AMOUNT) AS sum_slice_paid FROM t_payment WHERE _CODETERM = ? AND _MATR = ?";
+class PaymentController extends BaseController {
 
     public static function update($param) {
         $reqUpdate = "UPDATE t_payment SET _AMOUNT=:amount WHERE _IDPAY=:idpay";
-        $reqInsert = "INSERT INTO _payments_listener(_id,_former_amount,_new_amount,_reason,_user,_payment_id,_batch)
-                    VALUES(NULL,:formeramount,:newamount,:reason,:user,:idpay,:batch)";
+        $reqInsert = "INSERT INTO _payments_listener(_id,_former_amount,_new_amount,_reason,_updated_at,_user,_payment_id,_batch)
+                    VALUES(NULL,:formeramount,:newamount,:reason,:updatedat,:user,:idpay,:batch)";
         $reqSelect = "SELECT _batch FROM _payments_listener WHERE _payment_id=? ORDER BY _id DESC LIMIT 1";
-        $db = getDB();
+        $db = parent::db();
+        $_SESSION['date'] = parent::tango('d/m/Y');
 
         try {
             $db->beginTransaction();
@@ -56,6 +33,7 @@ class PaymentController {
                 'formeramount' => $param['former_amount'],
                 'newamount' => $param['new_amount'],
                 'reason' => $param['update_reason'],
+                'updatedat' => parent::tango(),
                 'user' => $_SESSION['uid'],
                 'idpay' => $param['code_pay'],
                 'batch' => $newbatch
@@ -78,7 +56,6 @@ class PaymentController {
             return 1;
         } catch (\Exception $e) {
             $db->rollBack();
-            // return $e->getMessage();
             return $e->getMessage();
         }
     }
@@ -87,12 +64,12 @@ class PaymentController {
 
         $termSumPaid = self::getTermSumPaidByPupil($param['term'], $param['year'], $param['matr']);
         $termInfos = self::getTerm($param['term'], $param['year']);
-        $balance = $termInfos->_AMOUNT - $termSumPaid->sum;
+        $balance = bcsub($termInfos->_AMOUNT,$termSumPaid->sum,2);
         return $balance;
     }
 
     private static function getTerm($term, $year) {
-        $db = getDB();
+        $db = parent::db();
         $req = "SELECT term.*, sfees._LABEL AS _OBJECT_PAY
               FROM t_terms term JOIN t_school_fees sfees ON sfees._CODE = term._CODE_FEES
               WHERE term._CODETERM =:code AND term._ANASCO=:anasco";
@@ -105,7 +82,7 @@ class PaymentController {
     }
 
     private static function getTermSumPaidByPupil($term, $year, $matr) {
-        $db = getDB();
+        $db = parent::db();
         $sql = "SELECT SUM(_AMOUNT) AS sum FROM t_payment WHERE _CODETERM = :codeterm AND _ANASCO = :year  AND _MATR = :matr";
         // try {
 
@@ -158,7 +135,7 @@ class PaymentController {
     }
 
     public function getFees() {
-        $db = getDB();
+        $db = parent::db();
         $query = "SELECT * FROM t_school_fees WHERE _STATUS=:status";
         $query_execute = $db->prepare($query);
         $query_execute->execute
@@ -176,7 +153,8 @@ class PaymentController {
                       VALUES(:idpay,:matr,:codeterm,:objectpay,:datepay,:timepay,:amount,:anasco,:user,:department)";
         try {
 
-            $db = getDB();
+            $db = parent::db();
+            $_SESSION['date'] = parent::tango('d/m/Y');
             $payGenerate = "PAY-" . time();
 
             $db->beginTransaction();
@@ -188,8 +166,8 @@ class PaymentController {
                 'matr' => $data['mat_pupil'],
                 'codeterm' => $data['term'],
                 'objectpay' => $termInfos->_CODE_FEES,
-                'datepay' => date('d/m/Y'),
-                'timepay' => date('H:i:s'),
+                'datepay' => parent::tango('Y-m-d'),
+                'timepay' => parent::tango('H:i:s'),
                 'amount' => $data['amount'],
                 'anasco' => $data['anasco'],
                 'user' => $_SESSION['uid'],
@@ -198,8 +176,9 @@ class PaymentController {
 
             $termSumPaid = self::getTermSumPaidByPupil($data['term'], $data['anasco'], $data['mat_pupil']);
 
-            //varaibles for the invoice data here
-            $remaining_amount = $termInfos->_AMOUNT - ($termSumPaid->sum + (int) $data['amount']);
+            //--------variables for the invoice data start here----------
+            $totalAfterPay = $termSumPaid->sum + $data['amount'];
+            $remaining_amount = bcsub($termInfos->_AMOUNT,$totalAfterPay,2);
 
             $_SESSION['namePupil'] = $data['name_pupil'];
             $_SESSION['idpay'] = $payGenerate;
@@ -248,24 +227,21 @@ class PaymentController {
           JOIN t_subscription subscript ON pupils._MAT=subscript._MATR_PUPIL
           WHERE subscript._ANASCO=:year AND payment._ANASCO=:year " . $hasTerm . "AND subscript._CODE_CLASS=:level AND subscript._CODE_SECTION=:option
           AND payment._DEPARTMENT=:departement ORDER BY payment._DATEPAY DESC";
-        $db = getDB();
+        $db = parent::db();
         $sql_prepare = $db->prepare($Query);
-        $sql_prepare->execute(
-                array(
-                    "year" => $year,
-                    "frais" => $frais,
-                    "level" => $level,
-                    "option" => $option,
-                    "departement" => $departement
-                )
-        );
+        $sql_prepare->execute([
+          "year" => $year,
+          "frais" => $frais,
+          "level" => $level,
+          "option" => $option,
+          "departement" => $departement
+        ]);
         $response = $sql_prepare->fetchAll();
 
         $Query = "SELECT count(DISTINCT(students._MAT)) AS COUNTER
                 FROM t_students students
-                JOIN t_payment payment ON students._MAT =payment._MATR
                 JOIN t_subscription subscript ON students._MAT=subscript._MATR_PUPIL
-                WHERE payment._ANASCO=:year AND subscript._CODE_CLASS=:level AND subscript._CODE_SECTION=:option AND payment._DEPARTMENT=:departement";
+                WHERE subscript._ANASCO=:year AND subscript._CODE_CLASS=:level AND subscript._CODE_SECTION=:option AND subscript._DEPARTMENT=:departement";
 
         $sql_prepare = $db->prepare($Query);
         $sql_prepare->execute(

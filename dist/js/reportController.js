@@ -92,22 +92,22 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
                     //console.log("Total slice: ",$scope.totalTrim);
                     switch ($scope.cbo_frais.trim()) {
                         case "1TRIM":
-                            $scope.totalTrim=parseInt(document.querySelector('#lbl1TRIM').innerHTML);
+                            $scope.totalTrim=parseFloat(document.querySelector('#lbl1TRIM').innerHTML);
                             break;
                         case "2TRIM":
-                            $scope.totalTrim=parseInt(document.querySelector('#lbl2TRIM').innerHTML);
+                            $scope.totalTrim=parseFloat(document.querySelector('#lbl2TRIM').innerHTML);
                             break;
                         case "3TRIM":
-                            $scope.totalTrim=parseInt(document.querySelector('#lbl3TRIM').innerHTML);
+                            $scope.totalTrim=parseFloat(document.querySelector('#lbl3TRIM').innerHTML);
                             break;
                         case "all":
-                            $scope.totalTrim=parseInt(document.querySelector('#lblFRSCO').innerHTML);
+                            $scope.totalTrim=parseFloat(document.querySelector('#lblFRSCO').innerHTML);
                             break;
                         default:
                             break;
                     }
 
-                    $scope.totalGlobal=parseInt($scope.totalPupils) * parseInt($scope.totalTrim);
+                    $scope.totalGlobal=parseInt($scope.totalPupils) * parseFloat($scope.totalTrim);
                     console.log("Total pupils: ",$scope.totalPupils);
                     console.log("Total slice: ",$scope.totalTrim);
                     console.log("Total global: ",$scope.totalGlobal);
@@ -118,7 +118,9 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
                         $scope.totalTabpay+=parseFloat(value._AMOUNT);
 
                     });
-                    $scope.resteTabpay = parseInt($scope.totalGlobal) - parseInt($scope.totalTabpay);
+                    $scope.totalTabpay = $scope.totalTabpay.toFixed(2);
+                    resteTabpay = parseFloat($scope.totalGlobal) - parseFloat($scope.totalTabpay);
+                    $scope.resteTabpay = resteTabpay.toFixed(2);
                     console.log("Total pay:",$scope.totalTabpay);
                     console.log("Rows Students :"+$scope.pupilGroup.length);
                     if($scope.totalPupils != 0)
@@ -138,6 +140,9 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
                         }
 
                     }
+                    $scope.totalGlobal = $scope.formatMoney($scope.totalGlobal);
+                    $scope.totalTabpay = $scope.formatMoney($scope.totalTabpay);
+                    $scope.resteTabpay = $scope.formatMoney($scope.resteTabpay);
 
                 },
                 function(error){
@@ -152,7 +157,7 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
     $scope.isVisibeCtrl=false;
     $scope.PrinteTabPay=function(){
 
-        $scope.totalGlobal=parseInt($scope.totalPupils) * parseInt($scope.totalTrim);
+        $scope.totalGlobal=parseInt($scope.totalPupils) * parseFloat($scope.totalTrim);
 
         $scope.nameCurrent="";
         $scope.amount=0;
@@ -175,7 +180,7 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
                 sexPupil:value._SEX,
                 datePay:value._DATEPAY,
                 timePay:value._TIMEPAY,
-                amount:$scope.amount
+                amount:parseFloat($scope.amount.toFixed(2))
             };
             $scope.tablePayFormat.push(pupilFormat);
             $scope.amount=0;
@@ -185,9 +190,11 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
         $scope.totalPayPrint=0;
         $scope.totalrestePay=0;
         angular.forEach($scope.tablePayFormat,function(value,key){
-            $scope.totalPayPrint+=value.amount;
+            $scope.totalPayPrint+=parseFloat(value.amount);
         });
-        $scope.totalrestePay=$scope.totalGlobal-$scope.totalPayPrint;
+        $scope.totalPayPrint = $scope.totalPayPrint.toFixed(2);
+        $scope.totalrestePay=parseFloat($scope.totalGlobal)-parseFloat($scope.totalPayPrint);
+        $scope.totalrestePay = $scope.totalrestePay.toFixed(2);
 
         $scope.isVisibeCtrl=true;
         document.querySelector('#headerReport').style = "display:block";
@@ -196,7 +203,9 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
         document.querySelector('#menuBar').style.display="none";
         document.querySelector('#header').style.display="none";
 
-
+        $scope.totalGlobal = $scope.formatMoney($scope.totalGlobal);
+        $scope.totalPayPrint = $scope.formatMoney($scope.totalPayPrint);
+        $scope.totalrestePay = $scope.formatMoney($scope.totalrestePay);
     }
     $scope.print=function(){
         document.querySelector('#btnprint').style.display="none";
@@ -210,5 +219,21 @@ app.controller('CtrlStudent', function (factoryStudent,$scope,$http) {
     $scope.quitprint = function(){
         window.location.reload();
     }
+    $scope.formatMoney = function(amount, currency = '', decimalCount = 2, decimal = ".", thousands = " ") {
+        try {
+            decimalCount = Math.abs(decimalCount);
+            decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+            //const negativeSign = amount < 0 ? "-" : "";
+
+            let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+            let j = (i.length > 3) ? i.length % 3 : 0;
+
+            return currency + ' ' + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+        } catch (e) {
+            console.log('format money error :',e);
+        }
+    }
+
 
 });

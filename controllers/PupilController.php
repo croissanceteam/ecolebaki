@@ -36,7 +36,7 @@ class PupilController extends BaseController {
 
             $req3 = "UPDATE t_students SET _PICTURE=:picture WHERE _MAT=:matricule";
 
-            $req4 = "INSERT INTO _students_listener VALUES(NULL,NULL,:user,:student,:logfile)";
+            $req4 = "INSERT INTO _students_listener VALUES(NULL,:updatedat,:user,:student,:logfile)";
 
             $req5 = "SELECT student.*, sub._CODE_SECTION,sub._CODE_CLASS FROM t_students student
               INNER JOIN t_subscription sub ON sub._MATR_PUPIL = student._MAT
@@ -56,8 +56,8 @@ class PupilController extends BaseController {
 
             if ($select->rowCount() == 1) {
                 $student = $select->fetch();
-                $date = parent::myLocalDate();
-                $time = parent::myLocalTime();
+                $date = parent::tango('Y-m-d');
+                $time = parent::tango('H:i:s');
                 $file_content = "Informations sur la modification effectuee \n";
                 $file_content .= "------------------------------------------\n";
                 $file_content .= "Auteur de l'action : " . $_SESSION['uid'] . "\n";
@@ -158,8 +158,8 @@ class PupilController extends BaseController {
                         $path_tab[] = $current_dir_tab[$i];
                     }
                     $path = implode('/', $path_tab);
-                    $date4name = parent::myLocalDate('Y-m-d');
-                    $time4name = parent::myLocalTime('H-i-s');
+                    $date4name = parent::tango('Y-m-d');
+                    $time4name = parent::tango('H-i-s');
                     $filename = "shule-" . $date4name . "-" . $time4name . ".log";
                     $mypath = $path . "/storage/logs/" . $filename;
 
@@ -175,6 +175,7 @@ class PupilController extends BaseController {
 
                 $insert = $db->prepare($req4);
                 $insert->execute([
+                    'updatedat' => parent::tango(),
                     'user' => $_SESSION['uid'],
                     'student' => $param['pupilmatr'],
                     'logfile' => $filename

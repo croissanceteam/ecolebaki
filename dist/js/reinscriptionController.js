@@ -45,7 +45,7 @@ app.controller('ReinscriptionCtrl', function ($scope, $http) {
                     }
                 }
             });
-            
+
             $('#pupilstoreenrol-table tbody').on('click', 'tr', function (e) {
                 var data = table.data();
                 var index = e.target._DT_CellIndex.row;

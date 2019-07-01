@@ -41,12 +41,13 @@ if (isset($_SESSION['uid'])) {
     }
 
   }else {
+      $current_page=$_SERVER['REQUEST_URI'];
       if (isset($_GET['depart']) && isset($_GET['year'])) {
         PupilController::getPupils($_GET['depart'],$_GET['year']);
       } else if(isset($_GET['mat']))
         echo PupilController::getPupilInfos($_GET['mat']);
       else {
-        $current_page=$_SERVER['REQUEST_URI'];
+
         if(strpos($current_page,'getdashboarddata')){
           echo PupilController::countPupilsByPromo();
         }else{

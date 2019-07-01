@@ -115,13 +115,13 @@ app.controller('PaymentsCtrl', function ($scope, $http) {
                   // $('#codeterm').val(dataPay[i].slice_pay);
                   var term = dataPay[i].term;
                   switch (term) {
-                    case '1er Trimestre':
+                    case '1e Trimestre':
                       $('#codeterm').val('1TRIM');
                       break;
-                    case '2eme Trimestre':
+                    case '2è Trimestre':
                       $('#codeterm').val('2TRIM');
                       break;
-                    case '3eme Trimestre':
+                    case '3è Trimestre':
                       $('#codeterm').val('3TRIM');
                       break;
                     default:
@@ -326,7 +326,7 @@ app.controller('PaymentsCtrl', function ($scope, $http) {
         }else if ($('#mat_pupil').val() == '') {
             $('#error_msg').html("Le paiement ne peut pas s'effectuer");
         } else {
-            var balance = parseInt($scope.balance,10);
+            var balance = parseFloat($scope.balance,10);
             // console.log('Balance ',balance);
             // var diff = amount > balance;
             // console.log('Vrai ou faux ?',diff);
@@ -342,8 +342,8 @@ app.controller('PaymentsCtrl', function ($scope, $http) {
               $('#add_payment_form')[0].reset();
               // $('#pupilPaymentsModal').modal('hide');
               document.querySelector('#toggle-payments-modal').click();
-              var message = "<h3>Validez-vous ce paiement ?</h3><br><div style='text-align:left;font-size:16px'>Elève : "+ $('#name_pupil').val() +"<br>Matricule : "+ $('#mat_pupil').val() +
-              "<br>Trimestre : "+ term +"<br>Montant : "+ amount +" "+ $('#currency').text() +"</div>";
+              var message = "Confirmez-vous ce paiement ?<br><br>Elève : "+ $('#name_pupil').val() +"<br>Matricule : "+ $('#mat_pupil').val() +
+              "<br>Trimestre : "+ term +"<br>Montant : "+ amount +" "+ $('#currency').text();
               alertify.set({ labels: {
                   ok     : "Oui",
                   cancel : "Non"
@@ -398,8 +398,8 @@ app.controller('PaymentsCtrl', function ($scope, $http) {
       if(amount == "" || amount == 0 || reason == ""){
         //might left empty
       }else{
-        var balance = parseInt($scope.balance,10);
-        var formeramount = parseInt($('#former_amount').val(),10);
+        var balance = parseFloat($scope.balance,10);
+        var formeramount = parseFloat($('#former_amount').val(),10);
         var balance_recompute = balance + formeramount;
         console.log('Balance recompute ', balance_recompute);
         if(amount > balance_recompute){
@@ -416,16 +416,20 @@ app.controller('PaymentsCtrl', function ($scope, $http) {
           $('#error_msg2').html("");
           // $('#update_payment_form')[0].reset();
           $('#updatePaymentsModal').modal('hide');
-
-          var message =
-          "<h3>Validez-vous ce changement ?</h3><br><div style='text-align:left'><h4>Elève : " + $('#name_pupil').val() + "</h4><h4>Matricule : " + $('#mat_pupil').val() +
-          "</h4><h4>Trimestre : "+ $('#codeterm').val() + "</h4>"+
-          "<br><h4>Montant précedent : "+ $('#former_amount').val() +" "+ $('#currency').text() +"</h4>"+
-          "<h4>Nouveau montant : "+ amount +" "+ $('#currency').text() +"</h4></div>";
-          alertify.set({ labels: {
-              ok     : "Oui",
-              cancel : "Non"
-          } });
+          var trim = "";
+          if($('#codeterm').val() == "1TRIM"){
+            trim = "1e trimestre";
+          }else if($('#codeterm').val() == "2TRIM"){
+            trim = "2è trimestre";
+          }else if($('#codeterm').val() == "3TRIM"){
+            trim = "3è trimestre";
+          }
+          var message = "Confirmez-vous ce changement ?<br><br>Elève : " + $('#name_pupil').val() +
+          "<br>Matricule : " + $('#mat_pupil').val() +
+          "<br>Trimestre : "+ trim +
+          "<br><br>Montant précédent : "+ $('#former_amount').val() +" "+ $('#currency').text() +
+          "<br>Nouveau montant : "+ amount +" "+ $('#currency').text();
+          alertify.set({ labels: { ok     : "Oui", cancel : "Non" } });
           alertify.confirm(message, function (e) {
               if (e) {
                   // user clicked "ok"

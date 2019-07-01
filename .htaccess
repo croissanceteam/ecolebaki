@@ -27,3 +27,4 @@ RewriteRule ^updatepayment$ controllers/TaskPayment.php
 RewriteRule ^pupilinfos/(.*)$ controllers/TaskPupils.php?mat=$1
 RewriteRule ^addpupil$ controllers/TaskPupils.php
 RewriteRule ^updatepupil$ controllers/TaskPupils.php
+RewriteRule ^test$ controllers/test.php

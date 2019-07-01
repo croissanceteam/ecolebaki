@@ -70,8 +70,6 @@
                } catch (\Exception $e) {
                   echo "<div class=\"alert alert-danger\" style=\"position: relative;top:5em;text-align: center;\"> Echec</div>";
                }
-
-
             }
             ?>
                 <div style="text-align:center;">

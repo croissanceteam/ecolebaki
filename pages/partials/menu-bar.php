@@ -6,7 +6,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <span class="hidden" id="currency">USD</span>
+                <span class="hidden" id="currency"><?= $_SESSION['currency'] ?></span>
                 <a id="title_navbar" class="navbar-brand" href="index.html">ECOLE BAKI | <? echo ucwords($_SESSION['direction'])?></a>
             </div>
             <!-- /.navbar-header -->

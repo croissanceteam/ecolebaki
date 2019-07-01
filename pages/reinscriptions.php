@@ -29,8 +29,7 @@ if (!isset($_SESSION['uid'])) {
         <!-- DataTables Responsive CSS -->
         <link href="vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
         <!-- Alertify -->
-        <link rel="stylesheet" href="vendor/alertify/themes/alertify.core.css" />
-        <link rel="stylesheet" href="vendor/alertify/themes/alertify.default.css" />
+        <link rel="stylesheet" href="vendor/alertify/themes/alertify.css" />
         <!-- Custom CSS -->
         <link href="dist/css/sb-admin-2.css" rel="stylesheet">
 

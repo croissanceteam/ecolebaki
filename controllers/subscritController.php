@@ -7,7 +7,7 @@ include_once 'LoadPicture.php';
 class SubscritController {
 
     public function __construct() {
-        
+
     }
 
     public function ViewProperties() {
@@ -45,8 +45,8 @@ class SubscritController {
 
             $payGenerate = "PAY-" . time();
 
-            $req2 = "INSERT INTO t_payment (_IDPAY,_MATR,_CODETERM,_OBJECT,_DATEPAY,_TIMEPAY,_AMOUNT,_ANASCO,_USER_AGENT,_DEPARTMENT)" .
-                    " VALUES (:idpay,:matr,:codeTerm,:object,:datepay,:timepay,:amount,:anasco,:userAgent,:department)";
+            $req2 = "INSERT INTO t_payment (_IDPAY,_MATR,_CODETERM,_OBJECT,_DATEPAY,_TIMEPAY,_AMOUNT,_ANASCO,_USER_AGENT,_DEPARTMENT)
+                     VALUES (:idpay,:matr,:codeTerm,:object,:datepay,:timepay,:amount,:anasco,:userAgent,:department)";
 
             $query_execute = $db->prepare($req2);
             $query_execute->execute([
@@ -54,8 +54,8 @@ class SubscritController {
                 "matr" => $matrGenerate,
                 "codeTerm" => "1TRIM",
                 "object" => "FRSCO",
-                "datepay" => date('d/m/Y'),
-                "timepay" => date('H:i:s'),
+                "datepay" => $this->tango('Y-m-d'),
+                "timepay" => $this->tango('H:i:s'),
                 "amount" => $amount,
                 "anasco" => $_SESSION['anasco'],
                 "userAgent" => $_SESSION['uid'],
@@ -70,7 +70,7 @@ class SubscritController {
                 "matr" => $matrGenerate,
                 "codeClass" => $level,
                 "codeSection" => $section,
-                "dateSub" => date('d/m/Y'),
+                "dateSub" => self::tango('Y-m-d'),
                 "codeAgent" => $_SESSION['uid'],
                 "anasco" => $_SESSION['anasco'],
                 "department" => $_SESSION['direction']
@@ -100,6 +100,7 @@ class SubscritController {
 
             $remaining_amount = $total1TRIM - $amount;
             $_SESSION['remaining_amount'] = $remaining_amount;
+            $_SESSION['date'] = $this->tango('d/m/Y');
 
             $db->commit();
             return 1;
@@ -166,6 +167,14 @@ class SubscritController {
         $query_execute->execute();
         $response = $query_execute->fetchAll();
         return $response;
+    }
+
+    private function tango($format =  'Y-m-d H:i:s')
+    {
+      $tz = "Africa/Kinshasa";
+      $date = new DateTime($tz);
+      $date->setTimezone(new DateTimeZone($tz));
+      return $date->format($format);
     }
 
 }

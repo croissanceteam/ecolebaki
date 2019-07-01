@@ -6,14 +6,17 @@ function getLogger(){
   if (!empty($_POST['user']) && !empty($_POST['pwd'])) {
 
                  if (isset($_POST['user']) && isset($_POST['pwd'])) {
-                 $log=new logger();
+                 $log=new Logger();
+
                  $response=$log->getLogger($_POST['user'],$_POST['pwd']);
 
 
                  if($response == 'locked')
                  {
                    return 6;
-                 }else if ($response) {
+                 } else if ($response == 'denied'){
+                   return 2;
+                 } else if ($response) {
 
                      $login=$response['login'];
                      $terms=$response['terms'];

@@ -3,8 +3,8 @@ app.controller('SubcriptionCtrl',function($scope,$http){
   $scope.addPupil = function () {
     var mydata = $('#add-pupil-form').serialize();
     // console.log('New pupil data :',mydata);
-    var first_term = $('#first_term').text();
-    if($('#name').val() == "" || $('#sex').val() == "" || $('#town').val() == "" || $('#address').val() == "" || $('#born_town').val() == "" || $('#birthday').val() == "" || $('#section').val() == "" || $('#level').val() == "" || $('#amount').val() == "" || $('#amount').val() > first_term)
+    var first_term = parseFloat($('#first_term').text());
+    if($('#name').val() == "" || $('#sex').val() == "" || $('#town').val() == "" || $('#address').val() == "" || $('#born_town').val() == "" || $('#birthday').val() == "" || $('#section').val() == "" || $('#level').val() == "" || $('#amount').val() == "" || parseFloat($('#amount').val()) > first_term)
     {
       //might be left empty that way
     }else{
@@ -31,7 +31,8 @@ app.controller('SubcriptionCtrl',function($scope,$http){
               alertify.error("L'inscription a echoué!");
           }
         },
-        error: function (){
+        error: function (error){
+          console.log('Error :',error);
           alertify.error("L'opération n'a pas abouti!");
         }
       });

@@ -22,6 +22,14 @@ class BaseController{
       return $newtime;
   }
 
+  protected function tango($format =  'Y-m-d H:i:s')
+  {
+    $tz = "Africa/Kinshasa";
+    $date = new DateTime($tz);
+    $date->setTimezone(new DateTimeZone($tz));
+    return $date->format($format);
+  }
+
   /**
  * Undocumented function
  *

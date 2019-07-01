@@ -29,9 +29,7 @@ if (!isset($_SESSION['uid'])) {
         <!-- DataTables Responsive CSS -->
         <link href="vendor/datatables-responsive/dataTables.responsive.css" rel="stylesheet">
         <!-- Alertify -->
-        <link rel="stylesheet" href="vendor/alertify/themes/alertify.core.css" />
-        <!-- include a theme, can be included into the core instead of 2 separate files -->
-        <link rel="stylesheet" href="vendor/alertify/themes/alertify.default.css" />
+        <link rel="stylesheet" href="vendor/alertify/themes/alertify.css" />
         <!-- Custom CSS -->
         <link href="dist/css/sb-admin-2.css" rel="stylesheet">
 
@@ -86,7 +84,7 @@ if (!isset($_SESSION['uid'])) {
                         <div>
                             <table style="width: 100%;">
                                 <tr>
-                                    <td style="text-align: left;width: 67%;"><h3 style="margin-bottom:22px;"> ECOLE BAKI / <?= $_SESSION['direction'] ?></h3>Nº12, Av. EZO <br>Q/YOLO-NORD<br>C/KALAMU.<br>Site web: http://www.ecolebaki.com </td>
+                                    <td style="text-align: left;width: 67%;"><h3 style="margin-bottom:22px;"> ECOLE BAKI / <?= $_SESSION['direction'] ?></h3>Nº9, Av. M'fimi <br>Q/YOLO-NORD<br>C/KALAMU.<br>Site internet: www.ecolebaki.com </td>
                                     <td style="text-align: right; width: 33%"><img src="dist/images/logo-reverse.png" width="150" alt="Logo"> </td>
                                 </tr>
 
@@ -127,16 +125,16 @@ if (!isset($_SESSION['uid'])) {
 
                                             <optgroup label="--MATERNELLE--"></optgroup>
                                             <option>1ère MATERNELLE</option>
-                                            <option>2eme MATERNELLE</option>
-                                            <option>3eme MATERNELLE</option>
+                                            <option>2ème MATERNELLE</option>
+                                            <option>3ème MATERNELLE</option>
 
                                             <optgroup label="--PRIMAIRE--"></optgroup>
-                                            <option>1ere PRIMAIRE</option>
-                                            <option>2eme PRIMAIRE</option>
-                                            <option>3eme PRIMAIRE</option>
-                                            <option>4eme PRIMAIRE</option>
-                                            <option>5eme PRIMAIRE</option>
-                                            <option>6eme PRIMAIRE</option>
+                                            <option>1ère PRIMAIRE</option>
+                                            <option>2ème PRIMAIRE</option>
+                                            <option>3ème PRIMAIRE</option>
+                                            <option>4ème PRIMAIRE</option>
+                                            <option>5ème PRIMAIRE</option>
+                                            <option>6ème PRIMAIRE</option>
 
                                         </select>
                                     </div>
@@ -151,8 +149,8 @@ if (!isset($_SESSION['uid'])) {
                                             <optgroup label="--FRAIS SCOLAIRES--"></optgroup>
                                             <option value="all">TOUS</option>
                                             <option value="1TRIM">1er Trimestre</option>
-                                            <option value="2TRIM">2eme Trimestre</option>
-                                            <option value="3TRIM">3eme Trimestre</option>
+                                            <option value="2TRIM">2ème Trimestre</option>
+                                            <option value="3TRIM">3ème Trimestre</option>
 
                                         </select>
                                     </div>
@@ -402,36 +400,12 @@ if (!isset($_SESSION['uid'])) {
                         <i class="fa fa-print"></i> Quitter impression
                     </button>
                 </div>
-
-
-
             </div>
             <!-- /#page-wrapper -->
 
         </div>
         <!-- /#wrapper -->
-        <!-- UI dialog -->
-        <div style="display:none">
-        <div id="alert-message" title="Alerte" class="ui-state-error">
-            <p>
-            <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 50px 0;"></span>
-            <span id="alert-text"></span>
-            </p>
-        </div>
-        <div id="info-message" title="Information" class="ui-state-highlight">
-            <p>
-            <span class="ui-icon ui-icon-info" style="float:left; margin:0 7px 50px 0;"></span>
-            <span id="info-text"></span>
-            </p>
-        </div>
-        <div id="dialog-confirm" title="Confirmation de l'opération">
-            <p>
-            <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
-            <span id="confirm-text"></span>
-            </p>
-        </div>
-        </div>
-        <!-- /UI dialog -->
+
         <script>
 
         </script>
